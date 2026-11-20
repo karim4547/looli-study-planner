@@ -363,6 +363,12 @@ nav button{position:relative}
 @media(prefers-reduced-motion:reduce){.hmap .rline,.hmap .hpin .halo{animation:none!important}}
 
 .cmap[data-z=far] .campus{stroke-width:1.2}.cmap[data-z=max] .campus{stroke-width:.6}.cmap[data-z=far] .bd .top{stroke-width:.5}.cmap[data-z=max] .bd .top{stroke-width:.3}.cmap[data-z=max] .greens polygon,.cmap[data-z=max] .pitches polygon{stroke-width:.4}
+.cmbadge{position:absolute;left:10px;top:10px;z-index:5;font-weight:800;font-size:13px;color:#e2638f;background:light-dark(#fff,#2a2024);border:2px solid #e2638f;border-radius:16px;padding:4px 12px;pointer-events:none}
+.cmnorth{position:absolute;left:12px;bottom:10px;z-index:5;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;line-height:1;font-size:11px;font-weight:800;color:#e2638f;background:light-dark(#fff,#2a2024);border:2px solid #e2638f;pointer-events:none}
+.cmnorth span{font-size:9px}
+:root[data-skin=hud] .cmbadge{color:#29d9ff;background:#030a12;border-color:#29d9ff;border-radius:3px;font-family:Orbitron,sans-serif;font-size:11px;letter-spacing:.12em}
+:root[data-skin=hud] .cmnorth{color:#29d9ff;background:#030a12;border-color:#29d9ff}
+.cmap .gate rect,.cmap .hall circle{transform-box:fill-box;transform-origin:center}.cmap[data-z=far] .gate rect{transform:scale(.5)}.cmap[data-z=max] .gate rect{transform:scale(.3)}
 .cmlayer{position:absolute;inset:0;transform-origin:0 0}
 .cmov{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ovi{position:absolute;left:0;top:0;width:0;height:0}
@@ -961,10 +967,8 @@ function campusSvg(){const [bx,by,bw,bh]=CM.box,hud=HUD;
   <g class="lbls">${lbl}</g>
   <g class="pois">${poi}</g>
   </g>
-  <g class="compass" transform="translate(${bx+bw-46},${by+46})"><circle r="26"/><path d="M0-20L6 0 0 20-6 0Z"/><path class="n" d="M0-20L6 0H-6Z"/><text y="-30">N</text></g>
-  <g class="cartouche" transform="translate(${bx+14},${by+14})"><rect width="${hud?250:230}" height="40" rx="${hud?2:20}"/><text x="18" y="26">${hud?'GUC // CAMPUS GRID':'GUC · our little campus 💞'}</text></g>
 </svg>`}
-const CV={s:1,tx:0,ty:0,W:0,H:0,k0:1,ox:0,oy:0,z:''};
+const CV={s:1,tx:0,ty:0,W:0,H:0,k0:1,ox:0,oy:0,z:'',c:{s:1,tx:0,ty:0}};
 function cmMeasure(){const el=$('#spmap');if(!el)return false;const r=el.getBoundingClientRect();if(!r.width)return false;const [bx,by,bw,bh]=CM.box;
   CV.W=r.width;CV.H=r.height;CV.k0=Math.min(CV.W/bw,CV.H/bh);CV.ox=(CV.W-bw*CV.k0)/2;CV.oy=(CV.H-bh*CV.k0)/2;return true}
 const m2p=(x,y)=>{const [bx,by]=CM.box;return [(CV.ox+(x-bx)*CV.k0)*CV.s+CV.tx,(CV.oy+(y-by)*CV.k0)*CV.s+CV.ty]};
@@ -974,12 +978,17 @@ function cmClamp(){const [,,bw,bh]=CM.box,l=CV.ox*CV.s,r=(CV.ox+bw*CV.k0)*CV.s,t
   CV.tx=Math.min(CV.W*.6-l,Math.max(CV.W*.4-r,CV.tx));CV.ty=Math.min(CV.H*.6-t,Math.max(CV.H*.4-b,CV.ty));
   if(CV.s<=1.001){CV.tx=0;CV.ty=0}}
 let cmRaf=0;function cmApply(){if(cmRaf)return;cmRaf=requestAnimationFrame(()=>{cmRaf=0;cmApplyNow()})}
-function cmApplyNow(){const ly=$('#cmlayer');if(!ly)return;cmClamp();ly.style.transform=`translate3d(${CV.tx.toFixed(1)}px,${CV.ty.toFixed(1)}px,0) scale(${CV.s.toFixed(4)})`;
+function cmApplyNow(){const ly=$('#cmlayer');if(!ly)return;cmClamp();const k=CV.s/CV.c.s,dx=CV.tx-CV.c.tx*k,dy=CV.ty-CV.c.ty*k;
+  ly.style.transform=Math.abs(k-1)<1e-4&&Math.abs(dx)<.05&&Math.abs(dy)<.05?'none':`translate3d(${dx.toFixed(1)}px,${dy.toFixed(1)}px,0) scale(${k.toFixed(4)})`;if(!CV.busy)cmCommitSoon();
   const z=CV.s>=4.5?'max':CV.s>=3.2?'far':CV.s>=1.9?'mid':'near';if(z!==CV.z){CV.z=z;const m=$('#cmap');if(m)m.dataset.z=z}cmPlace()}
 function cmZoomAt(f,px,py){const ns=Math.max(1,Math.min(6,CV.s*f));if(px==null){px=CV.W/2;py=CV.H/2}CV.tx=px-(px-CV.tx)*ns/CV.s;CV.ty=py-(py-CV.ty)*ns/CV.s;CV.s=ns;cmApply()}
 function cmFocus(xy,s=3){CV.s=s;const [px,py]=m2p(...xy);CV.tx+=CV.W/2-px;CV.ty+=CV.H/2-py;cmApply()}
-function cmGesture(on){const ly=$('#cmlayer');if(!ly)return;clearTimeout(CV.gt);if(on)ly.style.willChange='transform';else CV.gt=setTimeout(()=>{ly.style.willChange='auto'},180)}
-function cmBind(){const el=$('#spmap');if(!el||el.dataset.bound)return;el.dataset.bound=1;cmMeasure();cmApplyNow();
+/* while a finger is down the map is moved as one image (fast); as soon as it stops, it is redrawn sharp at the new zoom */
+function cmCommit(){const svg=$('#cmap'),ly=$('#cmlayer');if(!svg||!ly||!CV.W)return;const [x0,y0]=p2m(0,0),w=CV.W/(CV.k0*CV.s),h=CV.H/(CV.k0*CV.s);
+  svg.setAttribute('viewBox',`${x0.toFixed(2)} ${y0.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)}`);svg.setAttribute('preserveAspectRatio','none');ly.style.transform='none';ly.style.willChange='auto';CV.c={s:CV.s,tx:CV.tx,ty:CV.ty}}
+function cmCommitSoon(){clearTimeout(CV.ct);CV.ct=setTimeout(()=>requestAnimationFrame(cmCommit),110)}
+function cmGesture(on){const ly=$('#cmlayer');if(!ly)return;CV.busy=on;if(on){clearTimeout(CV.ct);ly.style.willChange='transform'}else cmCommitSoon()}
+function cmBind(){const el=$('#spmap');if(!el||el.dataset.bound)return;el.dataset.bound=1;cmMeasure();CV.c={s:1,tx:0,ty:0};const [bx,by,bw,bh]=CM.box;$('#cmap').setAttribute('viewBox',`${bx} ${by} ${bw} ${bh}`);$('#cmap').setAttribute('preserveAspectRatio','xMidYMid meet');cmApplyNow();cmCommit();
   const ptrs=new Map();let st=null,moved=false,lp=null,lastTap=0;
   const local=e=>{const r=el.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
   const begin=()=>{const v=[...ptrs.values()];if(v.length===1){const [x,y]=local(v[0]);st={x,y,tx:CV.tx,ty:CV.ty,s:CV.s}}else if(v.length>=2){const [a,b]=v.map(local);st={mx:(a[0]+b[0])/2,my:(a[1]+b[1])/2,d:Math.hypot(a[0]-b[0],a[1]-b[1])||1,tx:CV.tx,ty:CV.ty,s:CV.s,pinch:1}}};
@@ -996,13 +1005,13 @@ function cmBind(){const el=$('#spmap');if(!el||el.dataset.bound)return;el.datase
   el.addEventListener('wheel',e=>{e.preventDefault();const [x,y]=local(e);cmGesture(true);cmZoomAt(Math.exp(-e.deltaY*(e.ctrlKey?.01:.0018)),x,y);cmGesture(false)},{passive:false});
   el.addEventListener('contextmenu',e=>e.preventDefault());
   el.addEventListener('click',e=>{const a=e.target.closest('[data-who]');if(a)return spWho(a.dataset.who);const q=e.target.closest('[data-pl]');if(q){const p=(SP.shared?.places||[]).find(x=>x.id===q.dataset.pl);if(p)spPlace(p)}});
-  if(!CV.ro){CV.ro=new ResizeObserver(()=>{const k=CV.k0;if(cmMeasure()&&k!==CV.k0)cmApplyNow()});}CV.ro.disconnect();CV.ro.observe(el)}
+  if(!CV.ro){CV.ro=new ResizeObserver(()=>{const k=CV.k0;if(cmMeasure()&&k!==CV.k0){cmApplyNow();cmCommit()}});}CV.ro.disconnect();CV.ro.observe(el)}
 function cmTap(x,y){const b=buildingAt(x,y);if(!b)return;const mine=(S.classes||[]).filter(k=>{const s=roomSpot(k.room);return s&&s.label===b.name});
   const here=['karim','looli'].filter(w=>{const s=spotOf(w===ME?myPres():SP.pres[w]);return s&&buildingAt(...s.xy)===b});
   modal(`<h2>${esc(b.name)}</h2><p class="muted small">${b.lv>1?b.lv+' floors':'Ground floor'}${here.length?' · '+here.map(w=>WHO[w].emoji+' '+(w===ME?'you':WHO[w].name)).join(', ')+' here now':''}</p>
     ${mine.length?`<h3>Your classes here</h3><ul class="list">${mine.map(k=>`<li class="item"><span>${esc(DAYS[k.day])} ${esc(PER[k.period]?.[0]||'')} · ${esc(CN(C(k.course))||k.course)} ${esc(k.kind||'')} <span class="muted">${esc(k.room||'')}</span></span></li>`).join('')}</ul>`:''}
     <div class="row end"><button class="ghost" data-act="spPinHere" data-id="${b.c[0].toFixed(1)},${b.c[1].toFixed(1)}">Pin something here</button><button class="pri" data-act="close">Close</button></div>`)}
-function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=`<div id="cmlayer" class="cmlayer">${campusSvg()}</div><div id="cmov" class="cmov"></div><div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
+function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=`<div id="cmlayer" class="cmlayer">${campusSvg()}</div><div id="cmov" class="cmov"></div><div class="cmbadge">${HUD?'GUC // CAMPUS GRID':'GUC · our little campus 💞'}</div><div class="cmnorth" aria-hidden="true"><span>N</span>▲</div><div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
 /* overlay: avatars, pins, flags as light HTML on top of the map (cheap to animate and move) */
 function spMarkers(){const ov=$('#cmov');if(!ov)return;const items=[],spots={};
   for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],s=spotOf(p);if(!s)continue;spots[w]=s;const fresh=p&&Date.now()-p.ts<5*60000;
