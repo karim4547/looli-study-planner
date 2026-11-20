@@ -377,6 +377,18 @@ nav button{position:relative}
 .cmap[data-z=far] .rt,.cmap[data-z=max] .rt{stroke-width:1.6;stroke-dasharray:3 2.5}.cmap[data-z=far] .rt-glow,.cmap[data-z=max] .rt-glow{stroke-width:5}
 .cmrinfo{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:6;background:light-dark(#fff,#2a2024);color:var(--ink);border:2px solid #e2638f;border-radius:14px;padding:6px 10px 6px 14px;font-size:13px;box-shadow:0 4px 14px #0003;white-space:nowrap;display:flex;align-items:center;gap:8px}
 :root[data-skin=hud] .cmrinfo{background:#030a12;border-color:#ffb347;border-radius:3px}
+.exammode{border:2px solid var(--warn)}
+.plan7{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(130px,1fr);gap:10px;overflow-x:auto;padding-bottom:6px;margin-top:10px}
+.pday{display:flex;flex-direction:column;gap:6px;padding:10px;border-radius:12px;background:var(--grey);min-height:90px}.pday.now{outline:2px solid var(--rose)}
+.pblk{display:flex;justify-content:space-between;gap:6px;border:0;border-left:4px solid var(--c);border-radius:8px;background:var(--page);padding:6px 8px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;text-align:left}
+.pblk span{color:var(--muted);font-weight:600}.pblk.done{opacity:.5;text-decoration:line-through}.examflag{color:var(--warn);font-weight:700}
+.decks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.deck{display:flex;flex-direction:column;align-items:flex-start;gap:2px;border:0;border-top:5px solid var(--c);border-radius:12px;background:var(--grey);padding:12px;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.deck span{font-size:12px;color:var(--muted)}.deck em{font-style:normal;font-size:12px;font-weight:700;color:var(--rose)}
+.fcard{display:flex;flex-direction:column;justify-content:center;gap:14px;width:100%;min-height:220px;margin-top:12px;border:2px solid var(--line);border-radius:18px;background:var(--page);padding:22px;font:inherit;color:var(--ink);cursor:pointer;text-align:center;box-shadow:0 8px 24px #0002;transition:transform .35s}
+.fcard.flipped{animation:fflip .45s ease}@keyframes fflip{from{transform:rotateY(90deg)}}
+.fcard .fq{font-size:19px;font-weight:700}.fcard .fa{font-size:16px;line-height:1.45;border-top:2px dashed var(--line);padding-top:14px;color:var(--ink)}.fcard .hint{font-size:12px;color:var(--muted)}
+:root[data-skin=hud] .fcard,:root[data-skin=hud] .deck,:root[data-skin=hud] .pday{border-radius:4px}
 .cmlayer{position:absolute;inset:0;transform-origin:0 0}
 .cmov{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ovi{position:absolute;left:0;top:0;width:0;height:0}
@@ -592,7 +604,7 @@ function mergeData(d){let nm=0,nt=0,nc=0;S.dismissed=S.dismissed||{};
     if(!t){S.tasks.push({id:uid(),key:rt.key,title:rt.title,course:rt.course||'',due:rt.due||'',pri:rt.pri||'normal',done:false});nt++}
     else if(!t.edited){t.title=rt.title;t.due=rt.due||'';t.pri=rt.pri||t.pri}}
   if(Array.isArray(d.classes))S.classes=d.classes.map(k=>({...k,id:k.id||[k.day,k.period,k.course].join('-')}));
-  if(Array.isArray(d.history))S.history=d.history;if(d.portalGpa)S.portalGpa=d.portalGpa;
+  if(Array.isArray(d.history))S.history=d.history;if(d.portalGpa)S.portalGpa=d.portalGpa;if(d.decks)S.decks=d.decks;
   if(Array.isArray(d.events))S.events=d.events.map(e=>({...e,id:e.id||uid()}));
   for(const k of d.removed||[]){S.dismissed[k]=1;S.tasks=S.tasks.filter(t=>t.key!==k)}
   if(d.name&&!S.nameSet)S.name=d.name;
@@ -608,6 +620,35 @@ function gradeAlerts(first){S.alerts=S.alerts||{};const out=[];
     else if((now.k==='hard'&&/easy|ok/.test(prev.k)))out.push([`📉 ${n} got harder`,`You now need ${now.need}% on average to get ${c.goal}.`]);
     else if((/easy|ok/.test(now.k)&&prev.k==='hard'))out.push([`📈 ${n} looks better`,`Now ${now.need}% on average gets you ${c.goal}.`])}
   out.forEach(([t,b],i)=>{setTimeout(()=>toast(t+'. '+b),i*5200);notify(t,b,'grade-'+i,true)})}
+
+/* ---------- exam countdown mode: a day-by-day revision plan in the last three weeks before finals ---------- */
+function examDates(){const out=[];for(const c of S.courses){let d=c.exam&&/final/i.test(c.examName||'final')?c.exam:'';if(!d&&S.finalsStart)d=S.finalsStart;if(d&&until(d)>=0)out.push({c,d})}return out.sort((a,b)=>a.d.localeCompare(b.d))}
+function examPlan(){const ex=examDates().filter(e=>until(e.d)<=21);if(!ex.length)return null;const hours=+S.studyHours||5,days=[];
+  const need=c=>{try{const v=verdict(c,calc(c));return v.k==='win'?25:v.k==='unset'?60:Math.max(30,Math.min(100,v.need||60))}catch(e){return 60}};
+  for(let i=0;i<Math.min(21,until(ex[ex.length-1].d));i++){const dd=new Date();dd.setDate(dd.getDate()+i);const ds=iso(dd);
+    const live=ex.filter(e=>e.d>ds);if(!live.length)continue;let w=live.map(e=>{const left=Math.max(1,until(e.d)-i);return need(e.c)*(+e.c.credits||3)/Math.sqrt(left)*(left===1?3:1)}),sum=w.reduce((a,b)=>a+b,0);
+    const blocks=live.map((e,k)=>({c:e.c,h:Math.round(hours*w[k]/sum*2)/2})).filter(b=>b.h>=.5).sort((a,b)=>b.h-a.h);days.push({ds,blocks,exam:ex.filter(e=>e.d===iso(new Date(dd.getTime()+864e5))).map(e=>e.c)})}
+  return {ex,days}}
+function examCard(){const p=examPlan();if(!p)return '';S.revDone=S.revDone||{};const first=p.ex[0];
+  return `<section class="card exammode"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h2 style="margin:0">${HUD?'Exam protocol':'Exam countdown'} ⏳</h2><span class="pill hard">${CN(first.c)} in ${until(first.d)} day${until(first.d)===1?'':'s'}</span></div>
+    <p class="small muted">Hours go to the courses that need the most on the final and come up soonest. ${S.studyHours||5} h a day · change it in Settings.</p>
+    <div class="plan7">${p.days.slice(0,7).map((d,i)=>`<div class="pday${i===0?' now':''}"><b>${i===0?'Today':i===1?'Tomorrow':new Date(d.ds+'T00:00').toLocaleDateString('en',{weekday:'short',day:'numeric'})}</b>${d.blocks.map(b=>{const k=d.ds+'|'+b.c.id;return `<button class="pblk${S.revDone[k]?' done':''}" data-act="revTick" data-id="${k}" style="--c:${b.c.color||'var(--rose)'}">${esc(CN(b.c))} <span>${b.h} h</span></button>`}).join('')}${d.exam.length?`<small class="examflag">📝 ${d.exam.map(c=>esc(CN(c))).join(', ')} tomorrow</small>`:''}</div>`).join('')}</div></section>`}
+/* ---------- flashcards (spaced repetition: Again → see it again today; Got it → wait 1, 3, 7, 16 days) ---------- */
+const BOX=[0,1,3,7,16];
+function allCards(code){const out=[];const decks=S.decks||{};for(const k in decks)if(!code||k===code)decks[k].forEach((c,i)=>out.push({key:k+':'+i,code:k,q:c[0],a:c[1]}));
+  for(const c of S.mycards||[])if(!code||c.code===code)out.push({key:'m:'+c.id,code:c.code,q:c.q,a:c.a,mine:1,id:c.id});return out}
+const dueCards=code=>{S.fc=S.fc||{};return allCards(code).filter(c=>!S.fc[c.key]||S.fc[c.key].due<=today())};
+function courseByCode(code){return S.courses.find(c=>c.code===code)}
+function fcHome(){const codes=[...new Set([...Object.keys(S.decks||{}),...(S.mycards||[]).map(c=>c.code),...S.courses.map(c=>c.code)])].filter(Boolean);
+  modal(`<h2>🃏 Flashcards</h2><p class="small muted">Tap a deck to review what's due. ${Object.keys(S.decks||{}).length?'Starter cards were written from your lecture slides; add your own anytime.':'Add your own cards for any course.'}</p>
+    <div class="decks">${codes.map(k=>{const c=courseByCode(k),n=allCards(k).length,d=dueCards(k).length;return `<button class="deck" data-act="fcGo" data-id="${esc(k)}" style="--c:${c?.color||'var(--rose)'}"><b>${esc(c?CN(c):k)}</b><span>${n} card${n===1?'':'s'}</span><em>${d?d+' due':'all done ✓'}</em></button>`}).join('')}</div>
+    <div class="row end" style="margin-top:14px"><button class="ghost" data-act="fcAdd">Add a card</button>${dueCards().length?`<button class="pri" data-act="fcGo" data-id="">Review all due (${dueCards().length})</button>`:''}<button class="ghost" data-act="close">Close</button></div>`)}
+function fcStudy(code){const q=dueCards(code||undefined).sort(()=>Math.random()-.5);if(!q.length){toast('Nothing due in this deck. Come back later!');return fcHome()}SP.fcq={q,i:0,ok:0};fcShow()}
+function fcShow(flip){const st=SP.fcq,c=st.q[st.i];if(!c){S.xp=(S.xp||0)+st.ok*2;save();close();celebrate(`Deck done! ${st.ok}/${st.q.length} right · +${st.ok*2} XP`);return}const course=courseByCode(c.code);
+  modal(`<div class="row" style="justify-content:space-between"><h2 style="margin:0">${esc(course?CN(course):c.code)}</h2><span class="small muted">${st.i+1} / ${st.q.length}</span></div>
+    <button class="fcard${flip?' flipped':''}" data-act="fcFlip" aria-label="${flip?'Answer shown':'Tap to show the answer'}"><span class="fq">${esc(c.q)}</span>${flip?`<span class="fa">${esc(c.a)}</span>`:'<span class="hint">Tap to flip</span>'}</button>
+    <div class="row end" style="margin-top:12px">${flip?`<button class="ghost" data-act="fcAns" data-id="0">Again</button><button class="pri" data-act="fcAns" data-id="1">Got it</button>`:`<button class="ghost" data-act="close">Stop</button><button class="pri" data-act="fcFlip">Show answer</button>`}</div>`)}
+
 async function syncNow(manual){const c=syncCfg();if(!c.repo||!c.token){if(manual)toast('Add the data repo and key in settings first.');return}
   if(syncing)return;syncing=true;const msg=$('#smsg');if(msg&&manual)msg.textContent='Syncing…';
   try{const r=await fetch(`https://api.github.com/repos/${c.repo}/contents/${c.file||P.file}`,{headers:{Authorization:'Bearer '+c.token,Accept:'application/vnd.github.raw+json','X-GitHub-Api-Version':'2022-11-28'},cache:'no-store'});
@@ -701,7 +742,7 @@ today(){
   const up=[];for(let i=0;i<14;i++){const d=new Date();d.setDate(d.getDate()+i);const ds=iso(d);eventsOn(ds).forEach(e=>{if(e.kind!=='done'&&(!e.end||e.date===ds||i===0)&&!up.some(u=>u.title===e.title))up.push(e)})}
   const cl=S.classes.filter(k=>k.day===dayIdx()).sort((a,b)=>a.period-b.period);
   if(!S.courses.length)return `<section class="card welcome">${HUD?'<svg class="reactor wreact" viewBox="0 0 100 100" aria-hidden="true"><circle class="r0" cx="50" cy="50" r="47"/><circle class="r1" cx="50" cy="50" r="40"/><circle class="r2" cx="50" cy="50" r="31"/><circle class="r3" cx="50" cy="50" r="22"/><circle class="core" cx="50" cy="50" r="12"/></svg>':'<svg class="wbow" aria-hidden="true"><use href="#bow"/></svg>'}<h2>Hi ${esc(S.name||'there')}!</h2><p>Connect your GUC data once and your courses, marks, deadlines and timetable fill in by themselves, then stay up to date every Saturday and Wednesday.</p><button class="pri" data-act="settings">Connect my data</button><p class="small muted">Or add courses yourself in Courses &amp; grades.</p></section>`;
-  return `<section class="card live${liveOn()?' on':''}" id="live">${liveHtml()}</section>${nudges()}
+  return `<section class="card live${liveOn()?' on':''}" id="live">${liveHtml()}</section>${examCard()}${nudges()}
   <div class="hero"><section class="card lvl"><div class="lvring" style="--p:${lv.into}"><b>${lv.l}</b><small>level</small></div><div><small class="muted">Level ${lv.l}</small><h2>${esc(lv.title)}</h2><div class="bar" style="margin:8px 0 4px"><i style="width:${lv.into}%"></i></div><span class="small muted">${lv.into} / 100 XP to level ${lv.l+1}</span>
    <div class="row" style="gap:8px;margin-top:10px"><span class="tag flame"><svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="currentColor"/></svg>${st}-day streak</span><span class="tag">${nb}/${BADGES.length} badges</span></div></div></section>
   <div class="stats"><div class="stat"><div class="small muted">Average on marked work</div><div class="big" data-count="${o?o.avg:''}" data-suf="%">${o?fx(o.avg)+'%':'–'}</div></div><div class="stat"><div class="small muted">Grade so far</div><div class="big">${o?guc(o.avg).L:'–'}</div></div><div class="stat"><div class="small muted">Tasks left</div><div class="big" data-count="${open}" data-int="1">${open}</div></div><div class="stat"><div class="small muted">Next exam</div><div class="big">${exams[0]?until(exams[0].exam)+'d':'–'}</div><div class="small">${exams[0]?esc((exams[0].examName?exams[0].examName+', ':'')+CN(exams[0])):''}</div></div></div></div>
@@ -722,7 +763,7 @@ calendar(){
   <section class="card dayp"><h3>${new Date(sel+'T00:00').toLocaleDateString('en',{weekday:'long',month:'long',day:'numeric'})}</h3>${sev.length?`<ul class="list">${sev.map(e=>evLi(e,false)).join('')}</ul>`:'<p class="small muted">Nothing due.</p>'}${scl.length?`<p class="lbl">Classes</p>${scl.map(k=>classRow(k,false)).join('')}`:'<p class="small free">No classes.</p>'}<button class="pri" style="margin-top:12px" data-act="addOn" data-id="${sel}">Add a task on this day</button></section></div>`},
 courses(){
   const o=overall();
-  return `<div class="row sp" style="margin-bottom:16px"><div><h2>Courses &amp; grades</h2><p class="muted small" style="margin:4px 0 0">${o?`Average on marked work: ${fx(o.avg)}% (${guc(o.avg).L}). Tap a course to plan your goal.`:'Tap a course to add its marks.'}</p></div><button class="pri" data-act="nCourse">Add course</button></div>
+  return `<div class="row sp" style="margin-bottom:16px"><div><h2>Courses &amp; grades</h2><p class="muted small" style="margin:4px 0 0">${o?`Average on marked work: ${fx(o.avg)}% (${guc(o.avg).L}). Tap a course to plan your goal.`:'Tap a course to add its marks.'}</p></div><div class="row" style="gap:8px"><button class="ghost" data-act="fcHome">🃏 Flashcards${dueCards().length?` (${dueCards().length})`:''}</button><button class="pri" data-act="nCourse">Add course</button></div></div>
   ${(()=>{const b=gpaBase(),g1=gpaProj('goal'),g2=gpaProj('marks'),cg=S.portalGpa??b.g;if(!b.h)return '';const arrow=(x)=>x===null?'':x<cg-0.005?'<span class="up">better</span>':x>cg+0.005?'<span class="down">worse</span>':'';
    return `<section class="card gpa"><div class="gpacol"><small>Cumulative GPA now</small><b>${cg.toFixed(2)}</b><small>${b.h} hours</small></div><div class="gpacol"><small>If ${W.she} ${W.hits} every goal</small><b>${g1===null?'–':g1.toFixed(2)}</b>${arrow(g1)}</div><div class="gpacol"><small>If marks stay like now</small><b>${g2===null?'–':g2.toFixed(2)}</b>${arrow(g2)}</div><button class="ghost" data-act="hist">Past semesters</button><p class="small muted" style="grid-column:1/-1;margin:0">GUC scale: lower is better (0.7 is the best, 5.0 is a fail). Change goals in each course to see how the GPA moves.</p></section>`})()}
   <div class="grid">${S.courses.map(c=>{const r=calc(c),v=verdict(c,r);
@@ -824,6 +865,7 @@ function courseModal(id){const c=C(id);cwS=null;fnS=null;
 }
 function settings(){const c=syncCfg(),sy=S.sync||{};
   modal(`<div class="row sp"><h2>Settings</h2><button class="icon" data-act="close" aria-label="Close"><svg width="18" height="18"><use href="#x"/></svg></button></div>
+  <section class="syncbox"><h3>Finals</h3><p class="small muted" style="margin:0 0 8px">Three weeks before finals, Today turns into an exam countdown with a day-by-day revision plan. Set exact exam dates in each course; this date is used for courses without one.</p><form id="finf" class="row"><input name="f" type="date" value="${esc(S.finalsStart||'')}" aria-label="Finals start date"><input name="h" type="number" min="1" max="14" step="0.5" value="${S.studyHours||5}" style="width:90px" aria-label="Study hours a day"><span class="small muted">h/day</span><button class="ghost">Save</button></form></section>
   <section class="syncbox"><h3>On your phone</h3><p class="small muted" style="margin:0 0 8px">Install it like an app (own icon, opens full screen, works offline) and get notified about nudges, new grades and deadlines.</p><div class="row">${window.__bip?'<button class="pri" data-act="install">Install app</button>':''}<button class="chip" data-act="notifOn" aria-pressed="${('Notification' in window)&&Notification.permission==='granted'}">🔔 ${('Notification' in window)&&Notification.permission==='granted'?'Notifications on':'Turn on notifications'}</button></div><p class="small muted" style="margin:8px 0 0">iPhone: open it in Safari → Share → <b>Add to Home Screen</b>, then turn notifications on from the installed app. Android: tap Install app (or ⋮ → Install).</p></section>
   <section class="syncbox"><h3>Profile</h3><p class="small muted" style="margin:0 0 8px">Each profile keeps its own courses, ticks and XP on this device.</p><div class="row">${Object.entries(PROFILES).map(([id,p])=>`<button class="chip" data-act="prof" data-id="${id}" aria-pressed="${id===PID}">${esc(p.name)}${p.skin==='hud'?' · HUD':''}</button>`).join('')}</div></section>
   <section class="syncbox"><h3>GUC data sync</h3><p class="small muted">${W.Her} marks, deadlines and timetable come from a private GitHub repo that only its owner can read. This browser keeps the key; it's never put in the page itself.</p>
@@ -837,6 +879,7 @@ function settings(){const c=syncCfg(),sy=S.sync||{};
   <label for="imp">Restore from a backup</label><textarea id="imp" placeholder="Paste a backup here"></textarea><div class="row" style="margin-top:8px"><button class="ghost" data-act="impB">Restore</button><input type="file" id="impf" accept=".json,application/json" aria-label="Restore from file" style="flex:1"></div><p id="smsg" class="small" role="status"></p>
   <div class="row" style="margin-top:14px"><button class="ghost" data-act="reset" style="color:var(--warn)">Erase everything</button></div>`);
   $('#impf').onchange=e=>{const f=e.target.files[0];if(f)f.text().then(t=>{$('#imp').value=t;A.impB()})};
+  $('#finf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target);S.finalsStart=d.get('f')||'';S.studyHours=+d.get('h')||5;save();toast(S.finalsStart?`Finals from ${S.finalsStart}. Exam mode starts 3 weeks before.`:'Saved.')};
 }
 const A={
  close,settings,
@@ -845,6 +888,12 @@ const A={
  dTask:id=>{const t=S.tasks.find(x=>x.id===id);if(t&&t.key){S.dismissed=S.dismissed||{};S.dismissed[t.key]=1}del('tasks',id,'Task deleted')},
  syncSave(){const repo=$('#srepo').value.trim().replace(/^https?:\/\/github.com\//,'').replace(/\/$/,''),token=$('#stok').value.trim();if(!/^[\w.-]+\/[\w.-]+$/.test(repo)){$('#smsg').textContent='The repo should look like owner/name.';return}setSyncCfg({repo,token});syncNow(true)},
  syncLink(){const l=personalLink();(navigator.clipboard?navigator.clipboard.writeText(l):Promise.reject()).then(()=>toast('Personal link copied.'),()=>prompt('Copy '+W.her+' personal link:',l))},
+ fcHome(){fcHome()},
+ fcGo(code){close();setTimeout(()=>fcStudy(code),30)},
+ fcFlip(){fcShow(true)},
+ fcAns(ok){const st=SP.fcq,c=st.q[st.i];S.fc=S.fc||{};const cur=S.fc[c.key]||{box:0};const box=+ok?Math.min(4,cur.box+1):0;const d=new Date();d.setDate(d.getDate()+(+ok?BOX[box]:0));S.fc[c.key]={box,due:iso(d)};if(+ok)st.ok++;else st.q.push(c);st.i++;save();fcShow()},
+ fcAdd(){form('New flashcard',[{k:'code',label:'Course',options:S.courses.map(c=>[c.code,CN(c)||c.name]),value:S.courses[0]?.code},{k:'q',label:'Question',req:1},{k:'a',label:'Answer',req:1}],v=>{S.mycards=[...(S.mycards||[]),{id:uid(),...v}];toast('Card added.')})},
+ revTick(k){S.revDone=S.revDone||{};S.revDone[k]=!S.revDone[k];if(S.revDone[k]){S.xp=(S.xp||0)+5;toast('Revision block done. +5 XP')}save();render()},
  install(){const e=window.__bip;if(!e)return;e.prompt();e.userChoice.finally(()=>{window.__bip=null;close()})},
  notifOn(){if(!('Notification' in window))return toast('This browser can\'t show notifications. On iPhone, install the app first (Share → Add to Home Screen).');Notification.requestPermission().then(p=>{if(p==='granted'){notify('Notifications are on','You\'ll hear about nudges, grades and deadlines.','test',true);toast('Notifications are on.')}else toast('Notifications were not allowed.');close()})},
  prof(id){if(id===PID||!PROFILES[id])return;try{const cur=syncCfg(),nk='looli-planner-sync'+PROFILES[id].sfx;let t={};try{t=JSON.parse(localStorage.getItem(nk))||{}}catch(e){}if(!t.token&&cur.token)localStorage.setItem(nk,JSON.stringify({repo:cur.repo,token:cur.token}));localStorage.setItem('planner-profile',id);sessionStorage.removeItem('booted')}catch(e){}location.href=location.pathname+'?p='+id},
