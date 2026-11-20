@@ -123,7 +123,7 @@ input[type=range]{padding:0;min-height:36px;border:0;background:none;accent-colo
 .xpfloat{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);font:600 26px Fredoka,sans-serif;color:var(--rose);z-index:11;pointer-events:none;animation:xp 1.2s ease-out forwards}@keyframes xp{to{transform:translate(-50%,-80px);opacity:0}}
 #view{animation:none}
 @media(prefers-reduced-motion:reduce){.anim,.grow,.pulse,.badge.on svg,.xpfloat{animation:none!important}}
-.band{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--band),light-dark(#fbe0e9,#4a2436),var(--band));background-size:200% 100%;animation:bandmove 14s ease-in-out infinite alternate}
+.band{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--band),light-dark(#fbe0e9,#4a2436),var(--band));background-size:200% 100%}
 @keyframes bandmove{to{background-position:100% 0}}
 .floaters{position:absolute;inset:0;pointer-events:none}.fl{position:absolute;opacity:.55;animation:floaty 9s ease-in-out infinite}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(20deg)}}
@@ -133,7 +133,7 @@ nav button{position:relative;z-index:1;transition:color .3s,opacity .3s}nav butt
 .viewin{animation:viewin .45s cubic-bezier(.2,.7,.3,1)}@keyframes viewin{from{opacity:0;transform:translateY(10px)}}
 .card{transition:transform .25s cubic-bezier(.2,.7,.3,1),box-shadow .25s}.card:hover{box-shadow:0 12px 34px light-dark(#e8b5c555,#000a)}
 main>.row h2,main>div>.row h2{font-size:28px;text-decoration:underline wavy light-dark(#f3b0c6,#7a3a52) 2px;text-underline-offset:8px}
-.live.on{border:2px solid transparent;background:linear-gradient(var(--page),var(--page)) padding-box,linear-gradient(90deg,#e2638f,#9b7fd4,#ee9257,#e2638f) border-box;background-size:100% 100%,300% 100%;animation:border 4s linear infinite}
+.live.on{border:2px solid transparent;background:linear-gradient(var(--page),var(--page)) padding-box,linear-gradient(90deg,#e2638f,#9b7fd4,#ee9257,#e2638f) border-box;background-size:100% 100%,100% 100%;animation:none infinite}
 @keyframes border{to{background-position:0 0,300% 0}}
 .pings{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px;margin:-4px 0 8px;scroll-snap-type:x mandatory}
 .nudge{flex:0 0 min(320px,85%);scroll-snap-align:start;display:flex;gap:12px;align-items:center;background:var(--page);border:1px solid var(--line);border-radius:20px;padding:12px 14px;box-shadow:var(--shadow)}
@@ -186,8 +186,8 @@ td input{min-height:40px;padding:6px 10px}td.n input{text-align:right}.sheet td:
 /* ===== HUD skin (profile "karim"): holographic heads-up display — cyan glass, amber alerts, rotating reticle ===== */
 .reactor{display:none}
 :root[data-skin=hud]{color-scheme:dark;--bg:#050b14;--page:#081a2acc;--ink:#d9f7ff;--muted:#7fb0c4;--band:#06121f;--band2:#0b2438;--rose:#29d9ff;--grey:#0e2b40;--line:#1d4c66;--ok:#4dffb8;--warn:#ffb347;--shadow:0 0 0 1px #29d9ff22,0 10px 30px #000a,0 0 24px #29d9ff14;--hudf:Orbitron,Rajdhani,system-ui,sans-serif}
-:root[data-skin=hud] body{font-family:Rajdhani,system-ui,sans-serif;font-size:17px;font-weight:500;background:radial-gradient(1200px 600px at 70% -10%,#0d3550 0,transparent 60%),radial-gradient(900px 500px at -10% 110%,#2a1306 0,transparent 55%),linear-gradient(#29d9ff0a 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,#29d9ff0a 1px,transparent 1px) 0 0/32px 100%,var(--bg);background-attachment:fixed}
-:root[data-skin=hud] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(#fff0 0 2px,#00000018 2px 3px);mix-blend-mode:multiply}
+:root[data-skin=hud] body{font-family:Rajdhani,system-ui,sans-serif;font-size:17px;font-weight:500;background:radial-gradient(1200px 600px at 70% -10%,#0d3550 0,transparent 60%),radial-gradient(900px 500px at -10% 110%,#2a1306 0,transparent 55%),linear-gradient(#29d9ff0a 1px,transparent 1px) 0 0/100% 32px,linear-gradient(90deg,#29d9ff0a 1px,transparent 1px) 0 0/32px 100%,var(--bg);}
+:root[data-skin=hud] body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(#fff0 0 2px,#00000018 2px 3px);opacity:.6;display:none}
 :root[data-skin=hud] :is(h1,h2,h3,.ring b,.needbig,.split b,.projbig,.finres b,.gpacol b,.nowtxt b,.next b,.lvring b,.xpfloat,.big,.grade,.sess time,.lchip,.ed summary){font-family:var(--hudf);letter-spacing:.04em}
 :root[data-skin=hud] :is(h2,h3){text-transform:uppercase;font-size:.9em;letter-spacing:.12em;color:var(--rose);text-shadow:0 0 12px #29d9ff66}
 :root[data-skin=hud] h1{font-size:clamp(22px,4vw,34px);text-transform:uppercase;letter-spacing:.14em;color:#eafcff;text-shadow:0 0 18px #29d9ffaa,0 0 2px #fff}
@@ -207,7 +207,7 @@ td input{min-height:40px;padding:6px 10px}td.n input{text-align:right}.sheet td:
 :root[data-skin=hud] nav button[aria-current]{color:#001018!important;opacity:1}
 :root[data-skin=hud] nav .ind{border-radius:0;background:linear-gradient(90deg,#29d9ff,#7ff3ff);clip-path:polygon(10px 0,100% 0,calc(100% - 10px) 100%,0 100%);box-shadow:0 0 18px #29d9ff}
 :root[data-skin=hud] main>.row h2,:root[data-skin=hud] main>div>.row h2{font-size:22px;text-decoration:none;border-left:3px solid var(--warn);padding-left:10px}
-:root[data-skin=hud] .card{border-radius:4px;border:1px solid #29d9ff44;backdrop-filter:blur(6px);background:linear-gradient(var(--rose),var(--rose)) 0 0/18px 2px no-repeat,linear-gradient(var(--rose),var(--rose)) 0 0/2px 18px no-repeat,linear-gradient(var(--rose),var(--rose)) 100% 100%/18px 2px no-repeat,linear-gradient(var(--rose),var(--rose)) 100% 100%/2px 18px no-repeat,var(--page)}
+:root[data-skin=hud] .card{border-radius:4px;border:1px solid #29d9ff44;background:linear-gradient(var(--rose),var(--rose)) 0 0/18px 2px no-repeat,linear-gradient(var(--rose),var(--rose)) 0 0/2px 18px no-repeat,linear-gradient(var(--rose),var(--rose)) 100% 100%/18px 2px no-repeat,linear-gradient(var(--rose),var(--rose)) 100% 100%/2px 18px no-repeat,var(--page)}
 :root[data-skin=hud] .card:hover{box-shadow:0 0 0 1px #29d9ff88,0 0 30px #29d9ff33}
 :root[data-skin=hud] .live.on{background:linear-gradient(var(--page),var(--page)) padding-box,linear-gradient(90deg,#29d9ff,#ffb347,#e8483f,#29d9ff) border-box;background-size:100% 100%,300% 100%}
 :root[data-skin=hud] :is(.stat,.syncbox,.split div,.badge,.grp,.cell,.nudge,.sheet,.plan,.whatif){border-radius:4px}
@@ -272,7 +272,7 @@ nav button{position:relative}
 .spstats{justify-content:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted)}.spstats b{color:var(--ink)}
 
 .spmap{position:relative;height:min(68vh,560px);border-radius:18px;overflow:hidden;margin-top:10px;border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none}
-.cmap{width:100%;height:100%;display:block;cursor:grab;font-family:inherit}.cmap:active{cursor:grabbing}
+.cmap{width:100%;height:100%;display:block;overflow:visible;cursor:grab;font-family:inherit}.cmap:active{cursor:grabbing}
 .cmctl{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:6px}
 .cmctl button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--page);color:var(--ink);font-size:20px;font-weight:700;cursor:pointer;box-shadow:0 2px 8px #0002}
 /* pink: a hand-drawn storybook campus */
@@ -317,7 +317,7 @@ nav button{position:relative}
 :root[data-skin=hud] .spmap{border-radius:4px;border-color:#29d9ff66;box-shadow:0 0 30px #29d9ff22 inset}
 :root[data-skin=hud] .cmap{font-family:Rajdhani,system-ui,sans-serif}
 :root[data-skin=hud] .cmap .sea{fill:#030a12}:root[data-skin=hud] .cmap .gridl{stroke:#29d9ff;stroke-opacity:.08;stroke-width:1}
-:root[data-skin=hud] .cmap .campus{fill:#06182a;stroke:#29d9ff;stroke-width:2;stroke-dasharray:none;filter:drop-shadow(0 0 6px #29d9ff)}
+:root[data-skin=hud] .cmap .campus{fill:#06182a;stroke:#29d9ff;stroke-width:2.5;stroke-dasharray:none}
 :root[data-skin=hud] .cmap .greens polygon{fill:#4dffb8;fill-opacity:.07;stroke:#4dffb8;stroke-opacity:.3}
 :root[data-skin=hud] .cmap .pitches polygon{fill:#4dffb8;fill-opacity:.12;stroke:#4dffb8;stroke-opacity:.6}
 :root[data-skin=hud] .cmap .parks polygon{fill:none;stroke:#29d9ff;stroke-opacity:.25}:root[data-skin=hud] .cmap .parks polygon.perg{fill:#ffb347;fill-opacity:.15;stroke:none}
@@ -358,9 +358,42 @@ nav button{position:relative}
 .hmap .guc{fill:light-dark(#fff,#2a2024);stroke:#ee9257;stroke-width:3}.hmap .gl{font-size:10px;font-weight:800;text-anchor:middle;fill:#ee9257}
 :root[data-skin=hud] .homemap{border-radius:4px;border-color:#29d9ff66}
 :root[data-skin=hud] .hmap .hbg{fill:#030a12}:root[data-skin=hud] .hmap .hroads polyline{stroke:#29d9ff;stroke-opacity:.18}
-:root[data-skin=hud] .hmap .rglow{stroke:#ffb347;stroke-opacity:.25}:root[data-skin=hud] .hmap .rline{stroke:#ffb347;filter:drop-shadow(0 0 4px #ffb347)}
+:root[data-skin=hud] .hmap .rglow{stroke:#ffb347;stroke-opacity:.25}:root[data-skin=hud] .hmap .rline{stroke:#ffb347}
 :root[data-skin=hud] .hmap .house,:root[data-skin=hud] .hmap .guc{fill:#030a12}
 @media(prefers-reduced-motion:reduce){.hmap .rline,.hmap .hpin .halo{animation:none!important}}
+
+.cmap[data-z=far] .campus{stroke-width:1.2}.cmap[data-z=max] .campus{stroke-width:.6}.cmap[data-z=far] .bd .top{stroke-width:.5}.cmap[data-z=max] .bd .top{stroke-width:.3}.cmap[data-z=max] .greens polygon,.cmap[data-z=max] .pitches polygon{stroke-width:.4}
+.cmlayer{position:absolute;inset:0;transform-origin:0 0}
+.cmov{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.ovi{position:absolute;left:0;top:0;width:0;height:0}
+.ovi>*{pointer-events:auto}
+.cmctl{z-index:5}
+.cmap[data-z=max] .bl.big{font-size:2.6px}.cmap[data-z=max] .bl.small{font-size:2.2px;opacity:1}.cmap[data-z=max] .pn{font-size:2.4px;opacity:1}.cmap[data-z=max] .pois .hall,.cmap[data-z=max] .pois .food{opacity:1}
+.cmap[data-z=max] .hall circle{r:2.4}.cmap[data-z=max] .hall text{font-size:2.2px}.cmap[data-z=max] .walks polyline{stroke-width:1.2}
+.otie{position:absolute;left:0;top:0;height:0;border-top:3px dashed #e2638f;transform-origin:0 50%;display:none;opacity:.9}
+:root[data-skin=hud] .otie{border-top-color:#ffb347}
+.oav{position:absolute;transform:translate(-50%,-50%);border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;--c:#e2638f}
+.oav.karim{--c:#29d9ff}
+.oav b{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:light-dark(#fff,#1a1216);border:3px solid var(--c);box-shadow:0 3px 10px #0004;position:relative;z-index:1}
+:root[data-skin=hud] .oav b{background:#030a12}
+.oav.cls b{border-style:dashed}.oav.stale{opacity:.65}
+.oav i{position:absolute;top:-6px;right:-8px;font-style:normal;font-size:16px;z-index:2}
+.oav em{font-style:normal;font-size:11px;font-weight:800;color:#fff;background:var(--c);padding:1px 7px;border-radius:9px;margin-top:2px;white-space:nowrap}
+.oav .pulse2{position:absolute;top:0;left:50%;width:40px;height:40px;margin-left:-20px;border-radius:50%;border:3px solid var(--c);opacity:0}
+.oav.fresh .pulse2{animation:opulse 2s ease-out infinite}
+@keyframes opulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+.opl{position:absolute;transform:translate(-50%,-50%);border:0;background:none;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.opl b{font-size:20px;filter:drop-shadow(0 2px 2px #0004)}.opl span,.omeet span{font-size:10px;font-weight:800;background:light-dark(#fff,#1a1216);color:var(--ink);padding:1px 6px;border-radius:8px;white-space:nowrap;box-shadow:0 1px 4px #0003}
+.omeet{position:absolute;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;animation:obob 1.2s ease-in-out infinite;pointer-events:none}
+.omeet b{font-size:28px}.omeet span{background:var(--warn);color:#fff}
+@keyframes obob{50%{transform:translate(-50%,calc(-100% - 6px))}}
+.otut{position:absolute;transform:translate(-4px,-100%);display:flex;align-items:flex-end;gap:2px;pointer-events:none;--c:#e2638f}
+.otut.karim{--c:#29d9ff}.otut.up{transform:translate(-4px,-100%) translateY(-38px)}
+.otut .flagp{font-size:20px}
+.otut .tl{font-size:10px;line-height:1.25;background:light-dark(#fff,#1a1216);color:var(--ink);border:2px solid var(--c);border-radius:10px;padding:3px 7px;white-space:nowrap;box-shadow:0 2px 8px #0003;margin-bottom:12px}
+.otut .tl small{color:var(--muted);font-size:10px}
+:root[data-skin=hud] .otut .tl,:root[data-skin=hud] .opl span{background:#030a12;border-radius:3px}
+@media(prefers-reduced-motion:reduce){.oav .pulse2,.omeet{animation:none!important}}
 @media(prefers-reduced-motion:reduce){.cmap .radar,.cmap .tie,.cmap .cav .pulse,.cmap .cmeet{animation:none!important}}
 .spgrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .moods{display:flex;flex-wrap:wrap;gap:6px}
@@ -850,22 +883,23 @@ async function spIssue(title,init){if(SP.issues[title])return SP.issues[title];
   const made=await gh('/issues',{method:'POST',body:JSON.stringify({title:'space:'+title,body:enc(init)})});
   try{const list=await gh('/issues?state=open&per_page=100&sort=created&direction=asc');const first=list.find(i=>i.title==='space:'+title);if(first&&first.number<made.number){gh(`/issues/${made.number}`,{method:'PATCH',body:JSON.stringify({state:'closed'})}).catch(()=>{});SP.issues[title]=first;return first}}catch(e){}
   SP.issues[title]=made;return made}
-async function spPull(){if(SP.loading)return;SP.loading=true;
+async function spPull(withComments=true){if(SP.loading)return;SP.loading=true;
   try{const list=await gh('/issues?state=open&per_page=100&sort=created&direction=asc');const map={};
     const dup=[];for(const i of list)if(i.title.startsWith('space:')&&!i.pull_request){const k=i.title.slice(6);if(!map[k])map[k]=i;else if(map[k].number>i.number){dup.push(map[k]);map[k]=i}else dup.push(i)}
     for(const k in map)SP.issues[k]=map[k];
     for(const i of dup)gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({state:'closed'})}).catch(()=>{});
     for(const w of ['karim','looli'])SP.pres[w]=dec(SP.issues['presence:'+w]?.body)||SP.pres[w]||null;
-    SP.shared={...DEFAULT_SHARED(),...(dec(SP.issues['shared']?.body)||SP.shared||{})};
-    const board=await spIssue('board',{});const since=SP.since||'';const started=new Date(Math.floor((Date.now()-180000)/3600000)*3600000).toISOString();
+    if(Date.now()-(SP.sharedHold||0)>4000)SP.shared={...DEFAULT_SHARED(),...(dec(SP.issues['shared']?.body)||SP.shared||{})};
+    if(withComments||!SP.issues.board){const board=await spIssue('board',{});const since=SP.since||'';const started=new Date(Math.floor((Date.now()-180000)/3600000)*3600000).toISOString();
     let cm=[];for(let pg=1;pg<=5;pg++){const part=await gh(`/issues/${board.number}/comments?per_page=100&page=${pg}${since?'&since='+encodeURIComponent(since):''}`);cm=cm.concat(part);if(part.length<100)break}
     for(const c of cm){if(SP.comments.some(x=>x.id===c.id))continue;const o=dec(c.body);if(o)SP.comments.push({...o,id:c.id,at:c.created_at})}
-    SP.comments.sort((a,b)=>a.at<b.at?-1:1);SP.since=started;SP.err='';SP.last=Date.now();spInbox();spTogether();
+    SP.comments.sort((a,b)=>a.at<b.at?-1:1);SP.since=started}SP.err='';SP.last=Date.now();spInbox();spTogether();
   }catch(e){SP.err=e.message==='nokey'?'nokey':e.status?'perm':'net'}
   finally{SP.loading=false}
   if(cur==='space')spPaint()}
-async function spSaveShared(fn){try{const i=await spIssue('shared',DEFAULT_SHARED());const f=await gh(`/issues/${i.number}`);SP.issues['shared']=f;SP.shared={...DEFAULT_SHARED(),...(dec(f.body)||{})}}catch(e){await spPull()}const s=SP.shared||DEFAULT_SHARED();fn(s);SP.shared=s;spPaint();
-  const i=await spIssue('shared',s);await gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({body:enc(s)})});SP.issues['shared'].body=enc(s);spPaint()}
+async function spSaveShared(fn){if(!SP.shared)await spPull();const s=SP.shared||DEFAULT_SHARED();fn(s);SP.shared=s;SP.sharedHold=Infinity;spPaint();
+  try{const i=await spIssue('shared',s);let fresh=s;try{const f=await gh(`/issues/${i.number}`);const d=dec(f.body);if(d){fresh={...DEFAULT_SHARED(),...d};fn(fresh)}}catch(e){}
+    SP.shared=fresh;await gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({body:enc(fresh)})});SP.issues['shared'].body=enc(fresh)}finally{SP.sharedHold=Date.now()-3000}spPaint()}
 async function spPost(o){const b=await spIssue('board',{});const c=await gh(`/issues/${b.number}/comments`,{method:'POST',body:JSON.stringify({body:enc({...o,from:ME,ts:Date.now()})})});
   SP.comments.push({...o,from:ME,ts:Date.now(),id:c.id,at:c.created_at});spPaint()}
 async function spDel(id){const b=SP.issues.board;if(!b)return;await gh(`/issues/comments/${id}`,{method:'DELETE'});SP.comments=SP.comments.filter(c=>c.id!==id);spPaint()}
@@ -917,7 +951,7 @@ function campusSvg(){const [bx,by,bw,bh]=CM.box,hud=HUD;
   <rect x="${bx-400}" y="${by-400}" width="${bw+800}" height="${bh+800}" class="sea"/>
   ${hud?`<rect x="${bx-400}" y="${by-400}" width="${bw+800}" height="${bh+800}" fill="url(#grid)"/>`:''}
   <g id="cvp">
-  <polygon class="campus" points="${pts(CM.outline)}" filter="url(#soft)"/>
+  <polygon class="campus" points="${pts(CM.outline)}"/>
   <g class="greens">${CM.g.map(a=>`<polygon points="${pts(a)}"/>`).join('')}</g>
   <g class="pitches">${CM.p.map(([n,a])=>`<polygon points="${pts(a)}"/>`).join('')}</g>
   <g class="parks">${CM.pk.map(([n,a])=>`<polygon class="${n==='Pergola'?'perg':''}" points="${pts(a)}"/>`).join('')}</g>
@@ -926,45 +960,65 @@ function campusSvg(){const [bx,by,bw,bh]=CM.box,hud=HUD;
   <g class="blds">${bl}</g>
   <g class="lbls">${lbl}</g>
   <g class="pois">${poi}</g>
-  ${hud?`<g transform="translate(${cen(CM.outline).map(v=>v.toFixed(0)).join(',')})"><g class="radar"><path d="M0 0L380 0A380 380 0 0 1 329 190Z" fill="url(#sweep)"/></g></g>`:''}
-  <g id="cpins"></g><g id="cppl"></g>
   </g>
   <g class="compass" transform="translate(${bx+bw-46},${by+46})"><circle r="26"/><path d="M0-20L6 0 0 20-6 0Z"/><path class="n" d="M0-20L6 0H-6Z"/><text y="-30">N</text></g>
   <g class="cartouche" transform="translate(${bx+14},${by+14})"><rect width="${hud?250:230}" height="40" rx="${hud?2:20}"/><text x="18" y="26">${hud?'GUC // CAMPUS GRID':'GUC · our little campus 💞'}</text></g>
 </svg>`}
-const CV={s:1,x:0,y:0};
-function cmApply(){const [bx,by,bw,bh]=CM.box,cx=bx+bw/2,cy=by+bh/2;CV.x=Math.max(bx-cx*CV.s,Math.min(bx+bw-cx*CV.s,CV.x));CV.y=Math.max(by-cy*CV.s,Math.min(by+bh-cy*CV.s,CV.y));const g=$('#cvp');if(g)g.setAttribute('transform',`translate(${CV.x} ${CV.y}) scale(${CV.s})`);const m=$('#cmap');if(m){m.dataset.z=CV.s>=2.2?'far':CV.s>=1.4?'mid':'near';m.style.setProperty('--avk',(1.5/Math.pow(CV.s,.75)).toFixed(3))}}
-function cmToSvg(ev){const svg=$('#cmap'),pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());return [(p.x-CV.x)/CV.s,(p.y-CV.y)/CV.s,p.x,p.y]}
-function cmZoom(f,cx,cy){const ns=Math.max(.8,Math.min(8,CV.s*f));if(cx==null){const [bx,by,bw,bh]=CM.box;cx=bx+bw/2;cy=by+bh/2}CV.x=cx-(cx-CV.x)*ns/CV.s;CV.y=cy-(cy-CV.y)*ns/CV.s;CV.s=ns;cmApply()}
-function cmFocus(xy,s=2.6){const [bx,by,bw,bh]=CM.box;CV.s=s;CV.x=bx+bw/2-xy[0]*s;CV.y=by+bh/2-xy[1]*s;cmApply()}
-function cmBind(){const svg=$('#cmap');if(!svg||svg.dataset.bound)return;svg.dataset.bound=1;cmApply();
-  const ptrs=new Map();let start=null,moved=false,lp=null,pinch=null;
-  svg.addEventListener('pointerdown',e=>{svg.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,e);moved=false;const [x,y,sx,sy]=cmToSvg(e);start={sx,sy,cx:CV.x,cy:CV.y};
-    clearTimeout(lp);if(ptrs.size===1)lp=setTimeout(()=>{if(!moved){moved=true;spPinMenu(toLL(x,y))}},600);
-    if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY),s:CV.s}}});
-  svg.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId))return;ptrs.set(e.pointerId,e);
-    if(ptrs.size===2&&pinch){const [a,b]=[...ptrs.values()],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);const mid={clientX:(a.clientX+b.clientX)/2,clientY:(a.clientY+b.clientY)/2};const [,,mx,my]=cmToSvg(mid);cmZoom(pinch.s*d/pinch.d/CV.s,mx,my);moved=true;clearTimeout(lp);return}
-    if(!start)return;const [,,sx,sy]=cmToSvg(e);if(Math.hypot(sx-start.sx,sy-start.sy)>4){moved=true;clearTimeout(lp)}if(moved){CV.x=start.cx+(sx-start.sx);CV.y=start.cy+(sy-start.sy);cmApply()}});
-  const up=e=>{clearTimeout(lp);ptrs.delete(e.pointerId);if(ptrs.size<2)pinch=null;if(!ptrs.size){if(!moved&&start){const [x,y]=cmToSvg(e);cmTap(x,y,e)}start=null}};
-  svg.addEventListener('pointerup',up);svg.addEventListener('pointercancel',e=>{ptrs.delete(e.pointerId);start=null;clearTimeout(lp)});
-  svg.addEventListener('wheel',e=>{e.preventDefault();const [,,sx,sy]=cmToSvg(e);cmZoom(e.deltaY<0?1.15:1/1.15,sx,sy)},{passive:false});
-  svg.addEventListener('contextmenu',e=>e.preventDefault())}
-function cmTap(x,y,e){const av=e.target.closest&&e.target.closest('[data-who]');if(av)return spWho(av.dataset.who);const pl=e.target.closest&&e.target.closest('[data-pl]');if(pl){const p=(SP.shared?.places||[]).find(q=>q.id===pl.dataset.pl);if(p)return spPlace(p)}
-  const b=buildingAt(x,y);if(!b)return;const mine=(S.classes||[]).filter(k=>{const s=roomSpot(k.room);return s&&s.label===b.name});
+const CV={s:1,tx:0,ty:0,W:0,H:0,k0:1,ox:0,oy:0,z:''};
+function cmMeasure(){const el=$('#spmap');if(!el)return false;const r=el.getBoundingClientRect();if(!r.width)return false;const [bx,by,bw,bh]=CM.box;
+  CV.W=r.width;CV.H=r.height;CV.k0=Math.min(CV.W/bw,CV.H/bh);CV.ox=(CV.W-bw*CV.k0)/2;CV.oy=(CV.H-bh*CV.k0)/2;return true}
+const m2p=(x,y)=>{const [bx,by]=CM.box;return [(CV.ox+(x-bx)*CV.k0)*CV.s+CV.tx,(CV.oy+(y-by)*CV.k0)*CV.s+CV.ty]};
+const p2m=(px,py)=>{const [bx,by]=CM.box;return [bx+((px-CV.tx)/CV.s-CV.ox)/CV.k0,by+((py-CV.ty)/CV.s-CV.oy)/CV.k0]};
+function cmClamp(){const [,,bw,bh]=CM.box,l=CV.ox*CV.s,r=(CV.ox+bw*CV.k0)*CV.s,t=CV.oy*CV.s,b=(CV.oy+bh*CV.k0)*CV.s;
+  /* any corner can be brought to the middle of the screen, never further */
+  CV.tx=Math.min(CV.W*.6-l,Math.max(CV.W*.4-r,CV.tx));CV.ty=Math.min(CV.H*.6-t,Math.max(CV.H*.4-b,CV.ty));
+  if(CV.s<=1.001){CV.tx=0;CV.ty=0}}
+let cmRaf=0;function cmApply(){if(cmRaf)return;cmRaf=requestAnimationFrame(()=>{cmRaf=0;cmApplyNow()})}
+function cmApplyNow(){const ly=$('#cmlayer');if(!ly)return;cmClamp();ly.style.transform=`translate3d(${CV.tx.toFixed(1)}px,${CV.ty.toFixed(1)}px,0) scale(${CV.s.toFixed(4)})`;
+  const z=CV.s>=4.5?'max':CV.s>=3.2?'far':CV.s>=1.9?'mid':'near';if(z!==CV.z){CV.z=z;const m=$('#cmap');if(m)m.dataset.z=z}cmPlace()}
+function cmZoomAt(f,px,py){const ns=Math.max(1,Math.min(6,CV.s*f));if(px==null){px=CV.W/2;py=CV.H/2}CV.tx=px-(px-CV.tx)*ns/CV.s;CV.ty=py-(py-CV.ty)*ns/CV.s;CV.s=ns;cmApply()}
+function cmFocus(xy,s=3){CV.s=s;const [px,py]=m2p(...xy);CV.tx+=CV.W/2-px;CV.ty+=CV.H/2-py;cmApply()}
+function cmGesture(on){const ly=$('#cmlayer');if(!ly)return;clearTimeout(CV.gt);if(on)ly.style.willChange='transform';else CV.gt=setTimeout(()=>{ly.style.willChange='auto'},180)}
+function cmBind(){const el=$('#spmap');if(!el||el.dataset.bound)return;el.dataset.bound=1;cmMeasure();cmApplyNow();
+  const ptrs=new Map();let st=null,moved=false,lp=null,lastTap=0;
+  const local=e=>{const r=el.getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]};
+  const begin=()=>{const v=[...ptrs.values()];if(v.length===1){const [x,y]=local(v[0]);st={x,y,tx:CV.tx,ty:CV.ty,s:CV.s}}else if(v.length>=2){const [a,b]=v.map(local);st={mx:(a[0]+b[0])/2,my:(a[1]+b[1])/2,d:Math.hypot(a[0]-b[0],a[1]-b[1])||1,tx:CV.tx,ty:CV.ty,s:CV.s,pinch:1}}};
+  el.addEventListener('pointerdown',e=>{if(e.target.closest('.cmctl,[data-who],[data-pl]'))return;el.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,e);moved=ptrs.size>1;begin();cmGesture(true);
+    clearTimeout(lp);if(ptrs.size===1){const [x,y]=local(e);lp=setTimeout(()=>{if(!moved){moved=true;spPinMenu(toLL(...p2m(x,y)))}},600)}});
+  el.addEventListener('pointermove',e=>{if(!ptrs.has(e.pointerId)||!st)return;ptrs.set(e.pointerId,e);const v=[...ptrs.values()];
+    if(st.pinch&&v.length>=2){const [a,b]=v.map(local),mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2,d=Math.hypot(a[0]-b[0],a[1]-b[1]);
+      const ns=Math.max(1,Math.min(6,st.s*d/st.d));CV.s=ns;CV.tx=mx-(st.mx-st.tx)*ns/st.s;CV.ty=my-(st.my-st.ty)*ns/st.s;moved=true;clearTimeout(lp);cmApply();return}
+    const [x,y]=local(e);if(!moved&&Math.hypot(x-st.x,y-st.y)>6){moved=true;clearTimeout(lp)}if(moved){CV.tx=st.tx+(x-st.x);CV.ty=st.ty+(y-st.y);cmApply()}});
+  const end=e=>{if(!ptrs.has(e.pointerId))return;clearTimeout(lp);ptrs.delete(e.pointerId);
+    if(!ptrs.size){cmGesture(false);if(!moved&&st&&e.type==='pointerup'){const [x,y]=local(e),now=Date.now();
+        if(now-lastTap<300){lastTap=0;cmZoomAt(2,x,y);return}lastTap=now;const mx=p2m(x,y);setTimeout(()=>{if(lastTap===now)cmTap(mx[0],mx[1])},260)}st=null}else begin()};
+  el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end);
+  el.addEventListener('wheel',e=>{e.preventDefault();const [x,y]=local(e);cmGesture(true);cmZoomAt(Math.exp(-e.deltaY*(e.ctrlKey?.01:.0018)),x,y);cmGesture(false)},{passive:false});
+  el.addEventListener('contextmenu',e=>e.preventDefault());
+  el.addEventListener('click',e=>{const a=e.target.closest('[data-who]');if(a)return spWho(a.dataset.who);const q=e.target.closest('[data-pl]');if(q){const p=(SP.shared?.places||[]).find(x=>x.id===q.dataset.pl);if(p)spPlace(p)}});
+  if(!CV.ro){CV.ro=new ResizeObserver(()=>{const k=CV.k0;if(cmMeasure()&&k!==CV.k0)cmApplyNow()});}CV.ro.disconnect();CV.ro.observe(el)}
+function cmTap(x,y){const b=buildingAt(x,y);if(!b)return;const mine=(S.classes||[]).filter(k=>{const s=roomSpot(k.room);return s&&s.label===b.name});
   const here=['karim','looli'].filter(w=>{const s=spotOf(w===ME?myPres():SP.pres[w]);return s&&buildingAt(...s.xy)===b});
   modal(`<h2>${esc(b.name)}</h2><p class="muted small">${b.lv>1?b.lv+' floors':'Ground floor'}${here.length?' · '+here.map(w=>WHO[w].emoji+' '+(w===ME?'you':WHO[w].name)).join(', ')+' here now':''}</p>
     ${mine.length?`<h3>Your classes here</h3><ul class="list">${mine.map(k=>`<li class="item"><span>${esc(DAYS[k.day])} ${esc(PER[k.period]?.[0]||'')} · ${esc(CN(C(k.course))||k.course)} ${esc(k.kind||'')} <span class="muted">${esc(k.room||'')}</span></span></li>`).join('')}</ul>`:''}
     <div class="row end"><button class="ghost" data-act="spPinHere" data-id="${b.c[0].toFixed(1)},${b.c[1].toFixed(1)}">Pin something here</button><button class="pri" data-act="close">Close</button></div>`)}
-function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=campusSvg()+`<div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
-function spMarkers(){const g=$('#cppl'),pg=$('#cpins');if(!g)return;let h='';const spots={};
+function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=`<div id="cmlayer" class="cmlayer">${campusSvg()}</div><div id="cmov" class="cmov"></div><div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
+/* overlay: avatars, pins, flags as light HTML on top of the map (cheap to animate and move) */
+function spMarkers(){const ov=$('#cmov');if(!ov)return;const items=[],spots={};
   for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],s=spotOf(p);if(!s)continue;spots[w]=s;const fresh=p&&Date.now()-p.ts<5*60000;
-    h+=`<g class="cav ${w} ${fresh?'fresh':'stale'} ${s.gps?'gps':'cls'}" data-who="${w}" transform="translate(${s.xy[0].toFixed(1)},${s.xy[1].toFixed(1)})"><g class="cavk"><g class="cavs"><circle class="pulse" r="11"/><circle class="disc" r="11"/><text class="em" y="4.5">${WHO[w].emoji}</text>${p.mood?`<text class="md" x="9" y="-8">${esc(p.mood)}</text>`:''}<g class="tag" transform="translate(0,20)"><rect x="-20" y="-6" width="40" height="12" rx="6"/><text y="3">${s.gps?'':'📚 '}${WHO[w].name}</text></g></g></g></g>`}
-  if(spots.karim&&spots.looli){const [a,b]=[spots.karim.xy,spots.looli.xy];h=`<line class="tie" x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}"/>`+h}
-  g.innerHTML=h;const s=SP.shared||{};let ph='';
-  for(const pl of s.places||[]){const [x,y]=toXY(pl);ph+=`<g class="cpl" data-pl="${pl.id}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><text class="ico">${esc(pl.emoji||'💗')}</text><text class="pn" y="11">${esc(pl.name)}</text></g>`}
-  if(s.meet&&s.meet.until>Date.now()){const [x,y]=toXY(s.meet);ph+=`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><g class="cmeet"><text class="ico">📍</text><text class="pn" y="12">${esc(WHO[s.meet.by]?.name||'')}: ${esc(s.meet.msg||'Meet me here')}${s.meet.time?' · '+esc(s.meet.time):''}</text></g></g>`}
-  if(pg)pg.innerHTML=ph+tutPins();SP.spots=spots}
-function spFit(){const s=Object.values(SP.spots||{});if(s.length===2){const [a,b]=[s[0].xy,s[1].xy],d=Math.hypot(a[0]-b[0],a[1]-b[1]);cmFocus([(a[0]+b[0])/2,(a[1]+b[1])/2],Math.max(1,Math.min(4,500/(d+120))))}else if(s.length)cmFocus(s[0].xy,3);else{CV.s=1;CV.x=0;CV.y=0;cmApply()}}
+    items.push({k:'av-'+w,xy:s.xy,z:3,html:`<button class="oav ${w} ${fresh?'fresh':'stale'} ${s.gps?'gps':'cls'}" data-who="${w}" aria-label="${WHO[w].name}"><span class="pulse2"></span><b>${WHO[w].emoji}</b>${p.mood?`<i>${esc(p.mood)}</i>`:''}<em>${s.gps?'':'📚 '}${WHO[w].name}</em></button>`})}
+  const s=SP.shared||{};
+  for(const pl of s.places||[])items.push({k:'pl-'+pl.id,xy:toXY(pl),z:1,html:`<button class="opl" data-pl="${pl.id}"><b>${esc(pl.emoji||'💗')}</b><span>${esc(pl.name)}</span></button>`});
+  if(s.meet&&s.meet.until>Date.now())items.push({k:'meet',xy:toXY(s.meet),z:2,html:`<div class="omeet"><b>📍</b><span>${esc(WHO[s.meet.by]?.name||'')}: ${esc(s.meet.msg||'Meet me here')}${s.meet.time?' · '+esc(s.meet.time):''}</span></div>`});
+  if(spLocal().tuts)for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],nt=p?.nt;if(!nt)continue;const r=roomSpot(nt.room);if(!r)continue;
+    items.push({k:'tut-'+w,xy:r.xy,z:2,html:`<div class="otut ${w} ${w==='karim'?'up':''}"><span class="flagp">📌</span><span class="tl"><b>${esc(WHO[w].name)}</b> ${esc(nt.c)} · ${esc(nt.room)}<br><small>${esc(nt.day)} ${esc(nt.t)}</small></span></div>`})}
+  const sig=JSON.stringify(items.map(i=>[i.k,i.html]));SP.spots=spots;CV.items=items;CV.tie=spots.karim&&spots.looli?[spots.karim.xy,spots.looli.xy]:null;
+  if(sig!==CV.sig){CV.sig=sig;ov.innerHTML=`<div class="otie"></div>`+items.map(i=>`<div class="ovi" data-k="${i.k}" style="z-index:${i.z}">${i.html}</div>`).join('')}
+  cmPlace()}
+function cmPlace(){const ov=$('#cmov');if(!ov||!CV.items)return;const nodes=ov.querySelectorAll('.ovi');
+  CV.items.forEach((it,i)=>{const n=nodes[i];if(!n)return;const [x,y]=m2p(...it.xy);n.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`});
+  const t=ov.querySelector('.otie');if(t){if(CV.tie){const [a,b]=CV.tie.map(p=>m2p(...p)),d=Math.hypot(b[0]-a[0],b[1]-a[1]),ang=Math.atan2(b[1]-a[1],b[0]-a[0]);t.style.display='block';t.style.width=d.toFixed(1)+'px';t.style.transform=`translate3d(${a[0].toFixed(1)}px,${a[1].toFixed(1)}px,0) rotate(${ang}rad)`}else t.style.display='none'}}
+function spFit(){const s=Object.values(SP.spots||{});if(s.length===2){const [a,b]=[s[0].xy,s[1].xy],d=Math.hypot(a[0]-b[0],a[1]-b[1]);cmFocus([(a[0]+b[0])/2,(a[1]+b[1])/2],Math.max(1.2,Math.min(5,(Math.min(CV.W,CV.H)*.6)/((d+60)*CV.k0))))}else if(s.length)cmFocus(s[0].xy,4);else{CV.s=1;cmApply()}}
 
 const avatarHtml=(w,p)=>{const fresh=p&&Date.now()-p.ts<5*60000;return `<div class="av ${w} ${fresh?'fresh':'stale'}"><span class="ring"></span><b>${WHO[w].emoji}</b>${p?.mood?`<i>${esc(p.mood)}</i>`:''}<em>${WHO[w].name}</em></div>`};
 function whereIs(p){const s=spotOf(p);if(!s)return '';const b=buildingAt(...s.xy);if(!s.gps)return b?'in class in '+b.name:s.label?'in class in '+s.label:'';
@@ -1009,12 +1063,6 @@ function nextTut(){const now=new Date(),di=dayIdx(now),mins=now.getHours()*60+no
   for(let o=0;o<=7;o++){const d=(di+o)%7,l=tuts.filter(k=>k.day===d&&(o>0||toMin(PER[k.period][0])>mins-10)).sort((a,b)=>a.period-b.period);
     if(l.length){const k=l[0],c=C(k.course),t=PER[k.period]?.[0]||'';const when=new Date(now);when.setDate(now.getDate()+o);const [h,m]=t.split(':').map(Number);when.setHours(h||0,m||0,0,0);
       return {c:CN(c)||k.course,room:k.room||'',t,day:o===0?'today':o===1?'tomorrow':DAYS[d],at:+when}}}return null}
-function tutPins(){if(!spLocal().tuts)return '';let h='';
-  for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],nt=p?.nt;if(!nt)continue;const s=roomSpot(nt.room);if(!s)continue;
-    const off=w==='karim'?-7:7;h+=`<g transform="translate(${(s.xy[0]+off).toFixed(1)},${(s.xy[1]-4).toFixed(1)})"><g class="ctut ${w}"><g class="cavk"><path class="flag" d="M0 0V-26"/><path class="fl" d="M0-26h18l-5 6 5 6H0z"/><text class="ico" x="9" y="-18">📌</text>
-      <g class="tag" transform="translate(0,${w==='karim'?-44:10})"><rect x="-46" y="-7" width="92" height="14" rx="7"/><text y="3">${esc(WHO[w].name)}: ${esc(nt.c)} · ${esc(nt.room)}</text></g>
-      <text class="when" y="${w==='karim'?-55:26}">${esc(nt.day)} ${esc(nt.t)}</text></g></g></g>`}
-  return h}
 /* ---------- homes & the route between them ---------- */
 function homeCard(){const s=SP.shared||{},hm=s.homes||{},both=hm.karim&&hm.looli;
   return `<section class="card homecard"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Home ↔ home</h3>
@@ -1103,14 +1151,14 @@ function spPaint(){if(cur!=='space')return;const html=spView(),ae=document.activ
 function spBind(){const f=$('#spst');if(f)f.onsubmit=e=>{e.preventDefault();spSet({status:new FormData(f).get('s').trim()});spSendMe({},true);toast('Status set.')};
   const q=$('#spqa');if(q)q.onsubmit=e=>{e.preventDefault();const a=new FormData(q).get('a').trim();if(a)spPost({t:'answer',day:today(),a}).then(()=>{const t=SP.comments.find(c=>c.t==='answer'&&c.day===today()&&c.from===YOU);if(t)floatHearts('✨')})};
   const k=$('#spkey');if(k)k.onsubmit=e=>{e.preventDefault();const t=new FormData(k).get('k').trim();if(!t)return;setSyncCfg({...syncCfg(),token:t});SP.err='';SP.last=0;spPull();toast('Key saved.')}}
-function spStart(){if(SP.timer)return;let n=0;SP.timer=setInterval(()=>{if(document.hidden)return;n++;const fast=cur==='space';if(!fast&&n%8)return;spPull();if(n%4===0||!fast)spSendMe()},2500);
+function spStart(){if(SP.timer)return;let n=0;SP.timer=setInterval(()=>{if(document.hidden)return;n++;const fast=cur==='space';if(!fast&&n%12)return;spPull(!fast||n%2===0);if(n%6===0||!fast)spSendMe()},1500);
   if(spLocal().share&&!spLocal().ghost)spLocate(true);spPull().then(()=>spSendMe({},true))}
 Object.assign(A,{
   spShare(){const on=!(spLocal().share&&!spLocal().ghost);spSet({share:on,ghost:false});spLocate(on);if(!on)spSendMe({},true);else toast('Sharing your location with '+WHO[YOU].name+' while the app is open.');spPaint()},
   spGhost(){const g=!spLocal().ghost;spSet({ghost:g});if(g){spLocate(false);SP.here=null;spSendMe({},true);toast('Ghost mode: you\'re hidden from the map.')}else{if(spLocal().share)spLocate(true);spSendMe({},true)}spPaint()},
   spFit(){spFit()},
-  cmZ(d){cmZoom(d==='in'?1.4:1/1.4)},
-  cmHome(){CV.s=1;CV.x=0;CV.y=0;cmApply()},
+  cmZ(d){cmZoomAt(d==='in'?1.6:1/1.6)},
+  cmHome(){CV.s=1;cmApply()},
   spTuts(){spSet({tuts:!spLocal().tuts});spSendMe({},true);spMarkers();spPaint();if(spLocal().tuts){const n=nextTut();toast(n?`Your next tutorial: ${n.c} in ${n.room}, ${n.day} ${n.t}`:'No tutorials in your timetable.')}},
   spHome(){if(!navigator.geolocation)return toast('This browser can\'t share location.');toast('Getting your location…');navigator.geolocation.getCurrentPosition(pos=>{const {latitude:lat,longitude:lng,accuracy}=pos.coords;
     spSaveShared(s=>{s.homes={...(s.homes||{}),[ME]:{lat:+lat.toFixed(5),lng:+lng.toFixed(5)}}}).then(()=>{toast(`Home saved (accurate to about ${Math.round(accuracy)} m).`);floatHearts('🏠')})},()=>toast('Location is blocked. Allow it for this site and try again.'),{enableHighAccuracy:true,timeout:20000})},
