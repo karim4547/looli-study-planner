@@ -287,7 +287,7 @@ nav button{position:relative}
 .cmap .bd .side{fill:light-dark(#c9b6bf,#120d10);opacity:.55}
 .cmap .bd .top{fill:light-dark(#efe7ea,#3a3035);stroke:light-dark(#cbb9c1,#5a4a52);stroke-width:1;transition:fill .2s}
 .cmap .bd.b .top{fill:light-dark(#dccfff,#3f3566)}.cmap .bd.c .top{fill:light-dark(#ffd7c2,#5e3a2c)}.cmap .bd.d .top{fill:light-dark(#c4ecdf,#24524a)}
-.cmap .bd.g .top{fill:light-dark(#fff0b3,#5a5026)}.cmap .bd.h .top{fill:light-dark(#ffc9dc,#5e2c40)}.cmap .bd.n .top{fill:light-dark(#f3d9e4,#4a3340)}
+.cmap .bd.g .top{fill:light-dark(#fff0b3,#5a5026)}.cmap .bd.a .top{fill:light-dark(#c9e6ff,#24425e)}.cmap .bd.nn .top{fill:light-dark(#ffe0b3,#5e4526)}.cmap .bd:not(.named):hover .top{fill:light-dark(#f6c9da,#4a3340);cursor:pointer}.cmap .bd.h .top{fill:light-dark(#ffc9dc,#5e2c40)}.cmap .bd.n .top{fill:light-dark(#f3d9e4,#4a3340)}
 .cmap .bd.named:hover .top{fill:#e2638f;cursor:pointer}
 .cmap .bl{text-anchor:middle;dominant-baseline:middle;font-weight:800;fill:light-dark(#5a3a48,#f6dbe6);paint-order:stroke;stroke:light-dark(#fff8,#0008);stroke-width:3;pointer-events:none}
 .cmap .bl.big{font-size:15px}.cmap .bl.small{font-size:8px;opacity:0}
@@ -934,19 +934,23 @@ const toLL=(x,y)=>({lat:CM.origin[0]-y/CM.k[1],lng:CM.origin[1]+x/CM.k[0]});
 const pts=a=>{let s='';for(let i=0;i<a.length;i+=2)s+=(i?' ':'')+a[i]+','+a[i+1];return s};
 const cen=a=>{let x=0,y=0,n=a.length/2;for(let i=0;i<a.length;i+=2){x+=a[i];y+=a[i+1]}return [x/n,y/n]};
 const inPolyXY=(x,y,a)=>{let c=false;for(let i=0,j=a.length-2;i<a.length;j=i,i+=2){const xi=a[i],yi=a[i+1],xj=a[j],yj=a[j+1];if(((yi>y)!==(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c}return c};
-const BLD=CM.b.map(([name,lv,a])=>({name,lv,a,c:cen(a)}));
+const BLD=CM.b.map(([name,lv,a],i)=>({i,name,lv,a,c:cen(a)}));
+/* names you give buildings, and buildings you add, live in the shared space so both of you see them */
+const bname=b=>(SP.shared?.labels||{})[b.i]||b.name;
+function extraB(){return (SP.shared?.xb||[]).map(x=>{const [cx,cy]=toXY(x),w=(x.w||40)/2,h=(x.h||30)/2;const a=[cx-w,cy-h,cx+w,cy-h,cx+w,cy+h,cx-w,cy+h].map(v=>Math.round(v));return {i:'x'+x.id,id:x.id,name:x.name,lv:x.lv||3,a,c:[cx,cy],extra:1}})}
+const allB=()=>[...extraB(),...BLD];
 const HALLS=Object.fromEntries(CM.poi.filter(p=>p[0]==='hall').map(p=>[p[1],[p[2],p[3]]]));
 function roomSpot(room){if(!room)return null;const r=room.toUpperCase().replace(/\s/g,'');
   if(HALLS[r])return {xy:HALLS[r],label:'Hall '+r};const m=r.match(/^([A-Z]\d?)\./)||r.match(/^([A-Z]\d)/);if(!m)return null;
-  const b=BLD.find(b=>b.name.toUpperCase()===m[1])||BLD.find(b=>b.name.toUpperCase().startsWith(m[1][0])&&m[1].length===1);return b?{xy:b.c,label:b.name}:null}
+  const B=allB(),nm=b=>(bname(b)||'').toUpperCase();const b=B.find(b=>nm(b)===m[1])||B.find(b=>nm(b)===m[1][0])||B.find(b=>nm(b).startsWith(m[1][0])&&m[1].length===1);return b?{xy:b.c,label:bname(b)}:null}
 function spotOf(p){if(!p)return null;if(p.lat!=null&&!p.ghost){const [x,y]=toXY(p);return {xy:[x,y],gps:true}}
   if(p.room&&!p.ghost){const s=roomSpot(p.room);if(s)return {xy:s.xy,gps:false,label:s.label}}return null}
-function buildingAt(x,y){return BLD.find(b=>b.name&&inPolyXY(x,y,b.a))}
-const BCOL=n=>{const L=(n||'')[0];return {B:'b',C:'c',D:'d',G:'g',H:'h'}[L]||(n?'n':'x')};
+function buildingAt(x,y){return allB().find(b=>inPolyXY(x,y,b.a))}
+const BCOL=n=>{const L=(n||'')[0];return {A:'a',B:'b',C:'c',D:'d',G:'g',H:'h',N:'nn'}[L]||(n?'n':'x')};
 function campusSvg(){const [bx,by,bw,bh]=CM.box,hud=HUD;
   const bl=BLD.map(b=>{const k=BCOL(b.name),h=Math.min(4,b.lv||1)*2.2;
-    return `<g class="bd ${k}${b.name?' named':''}" data-b="${esc(b.name)}"><polygon class="side" points="${pts(b.a)}" transform="translate(${h*.6},${h})"/><polygon class="top" points="${pts(b.a)}"/></g>`}).join('');
-  const lbl=BLD.filter(b=>b.name&&!/^H\d+$/.test(b.name)||/^H\d+$/.test(b.name)).map(b=>{const big=/^[BCDG]\d?$/.test(b.name);return `<text class="bl ${big?'big':'small'}" x="${b.c[0].toFixed(0)}" y="${b.c[1].toFixed(0)}">${esc(b.name.length>16?b.name.slice(0,15)+'…':b.name)}</text>`}).join('');
+    return `<g class="bd ${k}${b.name?' named':''}" data-i="${b.i}"><polygon class="side" points="${pts(b.a)}" transform="translate(${h*.6},${h})"/><polygon class="top" points="${pts(b.a)}"/></g>`}).join('');
+  const lbl='';
   const poi=CM.poi.map(([k,n,x,y])=>k==='hall'?`<g class="hall" transform="translate(${x},${y})"><circle r="5.5"/><text y="2">${esc(n)}</text></g>`
     :k==='food'?`<g class="poi food" transform="translate(${x},${y})"><text class="ico">${n.match(/caf|aroma|pronto/i)?'☕':'🍔'}</text><text class="pn" y="11">${esc(n)}</text></g>`
     :k==='gate'?`<g class="poi gate" transform="translate(${x},${y})"><rect x="-4" y="-4" width="8" height="8" rx="2"/><text class="pn" y="12">${esc(n.replace(/\s*\(.*\)/,''))}</text></g>`:'').join('');
@@ -965,7 +969,8 @@ function campusSvg(){const [bx,by,bw,bh]=CM.box,hud=HUD;
   <g class="roads">${CM.r.filter(r=>r[0]).map(r=>`<polyline points="${pts(r[1])}"/>`).join('')}</g>
   <g class="walks">${CM.r.filter(r=>!r[0]).map(r=>`<polyline points="${pts(r[1])}"/>`).join('')}</g>
   <g class="blds">${bl}</g>
-  <g class="lbls">${lbl}</g>
+  <g id="cmx"></g>
+  <g class="lbls" id="cmlbl"></g>
   <g class="pois">${poi}</g>
   </g>
 </svg>`}
@@ -1005,14 +1010,22 @@ function cmBind(){const el=$('#spmap');if(!el||el.dataset.bound)return;el.datase
   el.addEventListener('contextmenu',e=>e.preventDefault());
   el.addEventListener('click',e=>{const a=e.target.closest('[data-who]');if(a)return spWho(a.dataset.who);const q=e.target.closest('[data-pl]');if(q){const p=(SP.shared?.places||[]).find(x=>x.id===q.dataset.pl);if(p)spPlace(p)}});
   if(!CV.ro){CV.ro=new ResizeObserver(()=>{const w=CV.W,h=CV.H;if(cmMeasure()&&(w!==CV.W||h!==CV.H))cmApplyNow()});}CV.ro.disconnect();CV.ro.observe(el)}
-function cmTap(x,y){const b=buildingAt(x,y);if(!b)return;const mine=(S.classes||[]).filter(k=>{const s=roomSpot(k.room);return s&&s.label===b.name});
+function cmTap(x,y){const b=buildingAt(x,y);if(!b)return;const name=bname(b);const mine=(S.classes||[]).filter(k=>{const s=roomSpot(k.room);return s&&name&&s.label===name});
   const here=['karim','looli'].filter(w=>{const s=spotOf(w===ME?myPres():SP.pres[w]);return s&&buildingAt(...s.xy)===b});
-  modal(`<h2>${esc(b.name)}</h2><p class="muted small">${b.lv>1?b.lv+' floors':'Ground floor'}${here.length?' · '+here.map(w=>WHO[w].emoji+' '+(w===ME?'you':WHO[w].name)).join(', ')+' here now':''}</p>
+  modal(`<h2>${name?esc(name):'Unnamed building'}</h2><p class="muted small">${b.extra?'Added by you two':b.lv>1?b.lv+' floors':'Ground floor'}${here.length?' · '+here.map(w=>WHO[w].emoji+' '+(w===ME?'you':WHO[w].name)).join(', ')+' here now':''}</p>
     ${mine.length?`<h3>Your classes here</h3><ul class="list">${mine.map(k=>`<li class="item"><span>${esc(DAYS[k.day])} ${esc(PER[k.period]?.[0]||'')} · ${esc(CN(C(k.course))||k.course)} ${esc(k.kind||'')} <span class="muted">${esc(k.room||'')}</span></span></li>`).join('')}</ul>`:''}
-    <div class="row end"><button class="ghost" data-act="spPinHere" data-id="${b.c[0].toFixed(1)},${b.c[1].toFixed(1)}">Pin something here</button><button class="pri" data-act="close">Close</button></div>`)}
+    <form id="bnf" class="row" style="margin-top:12px"><input name="n" maxlength="24" placeholder="${name?'Rename it':'Name it, e.g. N or A'}" value="${esc((SP.shared?.labels||{})[b.i]||(b.extra?b.name:''))}" style="flex:1"><button class="ghost">${name?'Rename':'Name it'}</button></form>
+    <div class="row end" style="margin-top:12px">${b.extra?`<button class="ghost" data-act="spDelXB" data-id="${b.id}">Remove building</button>`:''}<button class="ghost" data-act="spPinHere" data-id="${b.c[0].toFixed(1)},${b.c[1].toFixed(1)}">Pin something here</button><button class="pri" data-act="close">Close</button></div>`);
+  $('#bnf').onsubmit=e=>{e.preventDefault();const n=new FormData(e.target).get('n').trim();close();
+    spSaveShared(sh=>{if(b.extra){sh.xb=(sh.xb||[]).map(q=>q.id===b.id?{...q,name:n||q.name}:q)}else{const L={...(sh.labels||{})};if(n)L[b.i]=n;else delete L[b.i];sh.labels=L}}).then(()=>{CV.lsig='';cmLabels();toast(n?`Named it ${n}. ${WHO[YOU].name} sees it too.`:'Name removed.')})}}
 function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=`<div id="cmlayer" class="cmlayer">${campusSvg()}</div><div id="cmov" class="cmov"></div><div class="cmbadge">${HUD?'GUC // CAMPUS GRID':'GUC · our little campus 💞'}</div><div class="cmnorth" aria-hidden="true"><span>N</span>▲</div><div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
 /* overlay: avatars, pins, flags as light HTML on top of the map (cheap to animate and move) */
-function spMarkers(){const ov=$('#cmov');if(!ov)return;const items=[],spots={};
+
+function cmLabels(){const g=$('#cmlbl'),x=$('#cmx');if(!g)return;const L=SP.shared?.labels||{},X=SP.shared?.xb||[],sig=JSON.stringify([L,X]);if(sig===CV.lsig&&g.childNodes.length)return;CV.lsig=sig;
+  x.innerHTML=extraB().map(b=>`<g class="bd ${BCOL(b.name)} named xb" data-i="${b.i}"><polygon class="side" points="${pts(b.a)}" transform="translate(4,6)"/><polygon class="top" points="${pts(b.a)}"/></g>`).join('');
+  document.querySelectorAll('#cmap .blds .bd').forEach(el=>{const i=+el.dataset.i,n=L[i];if(n){el.setAttribute('class','bd '+BCOL(n)+' named')}});
+  g.innerHTML=allB().filter(b=>bname(b)).map(b=>{const n=bname(b),big=/^[A-Z]\d?$/.test(n);return `<text class="bl ${big?'big':'small'}" x="${b.c[0].toFixed(0)}" y="${b.c[1].toFixed(0)}">${esc(n.length>16?n.slice(0,15)+'…':n)}</text>`}).join('')}
+function spMarkers(){const ov=$('#cmov');if(!ov)return;cmLabels();const items=[],spots={};
   for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],s=spotOf(p);if(!s)continue;spots[w]=s;const fresh=p&&Date.now()-p.ts<5*60000;
     items.push({k:'av-'+w,xy:s.xy,z:3,html:`<button class="oav ${w} ${fresh?'fresh':'stale'} ${s.gps?'gps':'cls'}" data-who="${w}" aria-label="${WHO[w].name}"><span class="pulse2"></span><b>${WHO[w].emoji}</b>${p.mood?`<i>${esc(p.mood)}</i>`:''}<em>${s.gps?'':'📚 '}${WHO[w].name}</em></button>`})}
   const s=SP.shared||{};
@@ -1032,12 +1045,15 @@ const avatarHtml=(w,p)=>{const fresh=p&&Date.now()-p.ts<5*60000;return `<div cla
 function whereIs(p){const s=spotOf(p);if(!s)return '';const b=buildingAt(...s.xy);if(!s.gps)return b?'in class in '+b.name:s.label?'in class in '+s.label:'';
   const pl=(SP.shared?.places||[]).map(x=>({...x,d:distM(p,x)})).sort((a,b)=>a.d-b.d)[0];if(pl&&pl.d<30)return 'at '+pl.name;if(b)return 'in '+b.name;return inPolyXY(...s.xy,CM.outline)?'on campus':'off campus'}
 function spPinMenu(ll){modal(`<h2>This spot</h2><p class="muted small">${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}</p>
-  <form id="pinf"><label for="pn">Save it as one of our places</label><div class="row"><input id="pe" name="emoji" value="💗" maxlength="2" style="width:58px;text-align:center"><input id="pn" name="name" placeholder="e.g. our bench, the good coffee"></div>
+  <form id="pinf"><label for="pn">Save it as one of our places</label><div class="row" style="gap:6px;margin-bottom:6px">${['💗','🏓','☕','📚','🌳','🍔','🛋️','⚽'].map(e=>`<button type="button" class="mood" onclick="this.form.emoji.value='${e}';if(!this.form.name.value&&'${e}'==='🏓')this.form.name.value='Ping-pong area'">${e}</button>`).join('')}</div><div class="row"><input id="pe" name="emoji" value="💗" maxlength="2" style="width:58px;text-align:center"><input id="pn" name="name" placeholder="e.g. our bench, the ping-pong area"></div>
   <div class="row end" style="margin-top:10px"><button class="pri" name="k" value="place">Save place</button></div></form>
+  <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+  <form id="xbf"><label for="xn">Or add a building the map is missing (like the new A building)</label><div class="row"><input id="xn" name="n" maxlength="24" placeholder="Name, e.g. A" style="flex:1"><select name="sz" aria-label="Size"><option value="25">Small</option><option value="45" selected>Medium</option><option value="75">Large</option></select><button class="ghost">Add</button></div></form>
   <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
   <form id="meetf"><label for="mm">Or ask ${WHO[YOU].name} to meet you here</label><input id="mm" name="msg" placeholder="Meet me here" maxlength="60"><label for="mt">When</label><input id="mt" name="time" type="time">
   <div class="row end" style="margin-top:10px"><button type="button" class="ghost" data-act="close">Cancel</button><button class="pri">Drop the pin</button></div></form>`);
   $('#pinf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target),name=(d.get('name')||'').trim();if(!name)return;close();spSaveShared(s=>{s.places=[...(s.places||[]),{id:uid(),name,emoji:d.get('emoji')||'💗',lat:ll.lat,lng:ll.lng,by:ME}]}).then(()=>toast('Saved to our places.'))};
+  $('#xbf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target),n=(d.get('n')||'').trim(),z=+d.get('sz');if(!n)return;close();spSaveShared(sh=>{sh.xb=[...(sh.xb||[]),{id:uid(),name:n,lat:+ll.lat.toFixed(6),lng:+ll.lng.toFixed(6),w:z,h:Math.round(z*.75),by:ME}]}).then(()=>{CV.lsig='';cmLabels();toast(`Added ${n} to the map.`)})};
   $('#meetf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target);close();spSaveShared(s=>{s.meet={lat:ll.lat,lng:ll.lng,msg:(d.get('msg')||'Meet me here').trim(),time:d.get('time')||'',by:ME,until:Date.now()+6*3600e3}}).then(()=>{spPost({t:'ping',k:'meet'});toast('Pin dropped. '+WHO[YOU].name+' will see it.')})}}
 function spPlace(pl){modal(`<h2>${esc(pl.emoji)} ${esc(pl.name)}</h2><p class="muted">Saved by ${esc(WHO[pl.by]?.name||'')}</p><div class="row end"><button class="ghost" data-act="spDelPlace" data-id="${pl.id}">Remove</button><button class="pri" data-act="close">Close</button></div>`)}
 function spWho(w){const p=w===ME?myPres():SP.pres[w];if(!p)return;const d=SP.pres[ME]?.lat!=null&&p.lat!=null&&w!==ME?distM(SP.pres[ME],p):null;
@@ -1179,6 +1195,7 @@ Object.assign(A,{
   spDelNote(id){spDel(+id)},
   spAddDate(){form('New countdown',[{k:'name',label:'What',req:1},{k:'emoji',label:'Emoji',value:'⏳'},{k:'date',label:'Date',type:'date',value:today(),req:1}],v=>{spSaveShared(s=>{s.dates=[...(s.dates||[]),{id:uid(),...v}]})})},
   spDelDate(id){spSaveShared(s=>{s.dates=(s.dates||[]).filter(x=>x.id!==id)})},
+  spDelXB(id){close();spSaveShared(sh=>{sh.xb=(sh.xb||[]).filter(q=>q.id!==id)}).then(()=>{CV.lsig='';cmLabels()})},
   spDelPlace(id){close();spSaveShared(s=>{s.places=(s.places||[]).filter(x=>x.id!==id)})},
   spFocus(v){if(v==='0'){const f=spLocal().focus;spSet({focus:null});spSendMe({},true);if(f&&f.withYou)spSaveShared(s=>{s.stats.studyMins=(s.stats.studyMins||0)+Math.max(0,(Date.now()-f.start)/60000)});spPaint();return}
     const you=SP.pres[YOU],join=v==='join'&&focusLeft(you?.focus);const until=join?you.focus.until:Date.now()+(+v)*60000;
