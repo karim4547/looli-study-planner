@@ -398,6 +398,7 @@ nav button{position:relative}
 .filebtn{display:inline-block;cursor:pointer}.ptl{display:grid;gap:10px;margin-top:10px}.pday2 small{color:var(--muted)}.pp2{display:grid;grid-template-columns:1fr 1fr;gap:6px}.pp2 img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px}.pp2 .nop{display:grid;place-items:center;aspect-ratio:1;border-radius:10px;background:var(--grey);font-size:26px;opacity:.5}
 .wgrid{display:grid;gap:4px;margin:8px 0}.wrow{display:grid;grid-template-columns:repeat(5,38px);gap:4px}.wrow i{height:38px;display:grid;place-items:center;font-style:normal;font-weight:800;border:2px solid var(--line);border-radius:6px}.wrow i.hit{background:#4fa79a;color:#fff;border-color:#4fa79a}.wrow i.near{background:#d2a22f;color:#fff;border-color:#d2a22f}.wrow i.miss{background:var(--grey);color:var(--muted)}
 .tq{padding:8px 0;border-bottom:1px dashed var(--line)}.tq small{display:block;color:var(--muted)}.mqopts{display:grid;gap:8px}
+.frb{margin:8px 0;line-height:2.1}.frb b{display:inline-block;min-width:28px}
 .cmlayer{position:absolute;inset:0;transform-origin:0 0}
 .cmov{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .ovi{position:absolute;left:0;top:0;width:0;height:0}
@@ -613,7 +614,7 @@ function mergeData(d){let nm=0,nt=0,nc=0;S.dismissed=S.dismissed||{};
     if(!t){S.tasks.push({id:uid(),key:rt.key,title:rt.title,course:rt.course||'',due:rt.due||'',pri:rt.pri||'normal',done:false});nt++}
     else if(!t.edited){t.title=rt.title;t.due=rt.due||'';t.pri=rt.pri||t.pri}}
   if(Array.isArray(d.classes))S.classes=d.classes.map(k=>({...k,id:k.id||[k.day,k.period,k.course].join('-')}));
-  if(Array.isArray(d.history))S.history=d.history;if(d.portalGpa)S.portalGpa=d.portalGpa;if(d.decks)S.decks=d.decks;
+  if(Array.isArray(d.history))S.history=d.history;if(d.portalGpa)S.portalGpa=d.portalGpa;if(d.decks)S.decks=d.decks;if(d.uploads)S.uploads=d.uploads;
   if(Array.isArray(d.events))S.events=d.events.map(e=>({...e,id:e.id||uid()}));
   for(const k of d.removed||[]){S.dismissed[k]=1;S.tasks=S.tasks.filter(t=>t.key!==k)}
   if(d.name&&!S.nameSet)S.name=d.name;
@@ -776,7 +777,7 @@ courses(){
   ${(()=>{const b=gpaBase(),g1=gpaProj('goal'),g2=gpaProj('marks'),cg=S.portalGpa??b.g;if(!b.h)return '';const arrow=(x)=>x===null?'':x<cg-0.005?'<span class="up">better</span>':x>cg+0.005?'<span class="down">worse</span>':'';
    return `<section class="card gpa"><div class="gpacol"><small>Cumulative GPA now</small><b>${cg.toFixed(2)}</b><small>${b.h} hours</small></div><div class="gpacol"><small>If ${W.she} ${W.hits} every goal</small><b>${g1===null?'–':g1.toFixed(2)}</b>${arrow(g1)}</div><div class="gpacol"><small>If marks stay like now</small><b>${g2===null?'–':g2.toFixed(2)}</b>${arrow(g2)}</div><button class="ghost" data-act="hist">Past semesters</button><p class="small muted" style="grid-column:1/-1;margin:0">GUC scale: lower is better (0.7 is the best, 5.0 is a fail). Change goals in each course to see how the GPA moves.</p></section>`})()}
   <div class="grid">${S.courses.map(c=>{const r=calc(c),v=verdict(c,r);
-   return `<article class="card ccard" style="--cc:${esc(c.color)}" data-act="oCourse" data-id="${c.id}" role="button" tabindex="0"><div class="row sp" style="flex-wrap:nowrap;align-items:flex-start"><div class="row" style="gap:8px;flex-wrap:nowrap;flex:1;align-items:baseline">${dot(c)}<div><h3>${esc(c.name)}</h3><div class="small muted">${esc(CN(c))}${c.short?' · '+esc(c.code):''}</div></div></div><span class="goalchip">Goal ${esc(c.goal)}</span></div>
+   return `<article class="card ccard" style="--cc:${esc(c.color)}" data-act="oCourse" data-id="${c.id}" role="button" tabindex="0"><div class="row sp" style="flex-wrap:nowrap;align-items:flex-start"><div class="row" style="gap:8px;flex-wrap:nowrap;flex:1;align-items:baseline">${dot(c)}<div><h3>${esc(c.name)}</h3><div class="small muted">${esc(CN(c))}${c.short?' · '+esc(c.code):''}${(S.uploads||{})[c.code]?.[1]?` · 📤 ${S.uploads[c.code][0]}/${S.uploads[c.code][1]} uploaded`:''}</div></div></div><span class="goalchip">Goal ${esc(c.goal)}</span></div>
    <div class="row" style="margin:12px 0 4px;align-items:baseline;gap:10px"><span class="big" data-count="${r.locked}" data-suf="%">${fx(r.locked)}%</span><span class="small muted">earned so far</span></div><p class="small muted" style="margin:0">${r.cur===null?'No marks yet':`Up to ${fx(r.best)}% still possible`}</p>
    ${meter(c,r)}<p class="pill ${v.k}">${v.txt}</p>${c.exam&&until(c.exam)>=0?`<p class="small muted" style="margin:6px 0 0">${esc(c.examName||'Exam')} ${until(c.exam)===0?'today':until(c.exam)===1?'tomorrow':'in '+until(c.exam)+' days'}</p>`:''}</article>`}).join('')||'<div class="card empty">No courses yet. Add the first one!</div>'}</div>
   <p class="note">The big number is what ${W.she} ${W.has} already earned out of the full 100%. The bar shows that (colour), what is still up for grabs (striped) and the goal line. Letters use the GUC scale.</p>${sampleNote()}`},
@@ -913,6 +914,7 @@ const A={
  spTrivA(v){const [qid,...rest]=v.split('|'),a=rest.join('|');const q=SP.comments.find(c=>c.t==='trivia'&&c.id===qid);spPost({t:'tans',qid,a}).then(()=>{if(q&&a===q.r){floatHearts('💯');toast('Correct! You know them well.')}else toast('Not quite. It was '+(q?.r||''))})},
  spMQ(){const qs=[...MQ].sort(()=>Math.random()-.5).slice(0,5);SP.mq={qs,i:0,score:0};mqShow()},
  spMQA(a){const st=SP.mq,q=st.qs[st.i];if(a===q[1]){st.score++;toast('✅ Right!')}else toast('❌ It was '+q[1]);st.i++;if(st.i>=st.qs.length){close();spPost({t:'mq',score:st.score});celebrate(`Marvel quiz: ${st.score}/5`)}else mqShow()},
+ spFree(){freeRooms()},
  install(){const e=window.__bip;if(!e)return;e.prompt();e.userChoice.finally(()=>{window.__bip=null;close()})},
  notifOn(){if(!('Notification' in window))return toast('This browser can\'t show notifications. On iPhone, install the app first (Share → Add to Home Screen).');Notification.requestPermission().then(p=>{if(p==='granted'){notify('Notifications are on','You\'ll hear about nudges, grades and deadlines.','test',true);toast('Notifications are on.')}else toast('Notifications were not allowed.');close()})},
  prof(id){if(id===PID||!PROFILES[id])return;try{const cur=syncCfg(),nk='looli-planner-sync'+PROFILES[id].sfx;let t={};try{t=JSON.parse(localStorage.getItem(nk))||{}}catch(e){}if(!t.token&&cur.token)localStorage.setItem(nk,JSON.stringify({repo:cur.repo,token:cur.token}));localStorage.setItem('planner-profile',id);sessionStorage.removeItem('booted')}catch(e){}location.href=location.pathname+'?p='+id},
@@ -1158,6 +1160,19 @@ function cmRoute(){const g=$('#cmroute'),info=$('#cmrinfo');if(!g)return;const R
   g.innerHTML=`<polyline class="rt-glow" points="${pts}"/><polyline class="rt" points="${pts}"/><circle class="rt-a" cx="${sx}" cy="${sy}" r="4"/><circle class="rt-b" cx="${ex}" cy="${ey}" r="5"/>`;
   if(info){info.hidden=false;info.innerHTML=`<b>${esc(R.from)} → ${esc(R.to)}</b> · ${Math.round(R.len)} m · about ${Math.max(1,Math.round(R.len/1.25/60))} min walk <button class="x" data-act="cmRouteOff" aria-label="Clear the route">×</button>`}}
 
+
+/* ---------- free-room finder (from every group's timetable on the portal, refreshed weekly) ---------- */
+async function loadRooms(){if(SP.rooms)return SP.rooms;const c=syncCfg();try{const r=await fetch(`https://api.github.com/repos/${c.repo||'karim4547/looli-data'}/contents/rooms.json`,{headers:{Authorization:'Bearer '+c.token,Accept:'application/vnd.github.raw+json'},cache:'no-store'});if(!r.ok)throw 0;SP.rooms=await r.json()}catch(e){SP.rooms=null}return SP.rooms}
+function curSlot(){const now=new Date(),mins=now.getHours()*60+now.getMinutes();let p=PER.findIndex(x=>toMin(x[1])>mins);if(p<0)p=0;return [dayIdx(now),p]}
+async function freeRooms(day,per){const R=await loadRooms();if(!R)return toast('Room data isn\'t ready yet. It comes with the next refresh.');if(day==null){[day,per]=curSlot()}
+  const busy=new Set(Object.entries(R.rooms).filter(([k,v])=>v.some(([d,p])=>d===+day&&p===+per)).map(([k])=>k)),free=Object.keys(R.rooms).filter(k=>!busy.has(k)&&!/^H\d/.test(k)),halls=Object.keys(R.rooms).filter(k=>!busy.has(k)&&/^H\d/.test(k));
+  const by={};free.forEach(r=>{const b=(r.match(/^([A-Z]\d?)/)||[])[1]||'?';(by[b]=by[b]||[]).push(r)});
+  modal(`<h2>🚪 Free rooms</h2><form id="frf" class="row"><select name="d" aria-label="Day">${DAYS.slice(0,6).map((n,i)=>`<option value="${i}"${i===+day?' selected':''}>${n}</option>`).join('')}</select><select name="p" aria-label="Period">${PER.map((x,i)=>`<option value="${i}"${i===+per?' selected':''}>${x[0]}–${x[1]}</option>`).join('')}</select></form>
+    <p class="small muted">Rooms with no class scheduled in that slot, from all ${R.groups} group timetables (updated ${new Date(R.updated).toLocaleDateString('en',{day:'numeric',month:'short'})}). Labs and offices may still be locked.</p>
+    ${halls.length?`<p><b>Halls:</b> ${halls.sort((a,b)=>+a.slice(1)-+b.slice(1)).map(h=>`<button class="chip" data-act="spDir" data-id="${h}">${h}</button>`).join(' ')}</p>`:''}
+    ${Object.keys(by).sort().map(b=>`<div class="frb"><b>${b}</b> ${by[b].sort().map(r=>`<button class="chip" data-act="spDir" data-id="${r}">${r}</button>`).join(' ')}</div>`).join('')||'<p>Nothing free in that slot.</p>'}
+    <div class="row end" style="margin-top:12px"><button class="pri" data-act="close">Close</button></div>`);
+  $('#frf').onchange=e=>{const d=new FormData(e.currentTarget);freeRooms(d.get('d'),d.get('p'))}}
 function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){setTimeout(cmRoute,0);el.innerHTML=`<div id="cmlayer" class="cmlayer">${campusSvg()}</div><div id="cmov" class="cmov"></div><div id="cmrinfo" class="cmrinfo" hidden></div><div class="cmbadge">${HUD?'GUC // CAMPUS GRID':'GUC · our little campus 💞'}</div><div class="cmnorth" aria-hidden="true"><span>N</span>▲</div><div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
 /* overlay: avatars, pins, flags as light HTML on top of the map (cheap to animate and move) */
 
@@ -1324,7 +1339,7 @@ function spView(){if(!SP.last&&!SP.err){spPull()}
     <div class="row spstats"><span>💞 Together streak <b>${tg}</b> day${tg===1?'':'s'}</span><span>📚 Studied together <b>${Math.round(s.stats?.studyMins||0)}</b> min</span><span>🏆 Games ${(ttt.score[ME]||0)+(c4.score[ME]||0)+(rps.score[ME]||0)}–${(ttt.score[YOU]||0)+(c4.score[YOU]||0)+(rps.score[YOU]||0)}</span></div>
   </section>
   <section class="card spmapcard"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Our campus</h3>
-    <div class="row" style="gap:6px"><button class="chip" aria-pressed="${!!l.share&&!l.ghost}" data-act="spShare">${l.share&&!l.ghost?'📡 Sharing live':'📡 Share my location'}</button><button class="chip" aria-pressed="${!!l.ghost}" data-act="spGhost">👻 Ghost</button><button class="chip" data-act="spFit">🎯 Find us</button><button class="chip" aria-pressed="${!!l.tuts}" data-act="spTuts">📌 Next tutorials</button><button class="chip" data-act="spDir">🧭 Directions</button></div></div>
+    <div class="row" style="gap:6px"><button class="chip" aria-pressed="${!!l.share&&!l.ghost}" data-act="spShare">${l.share&&!l.ghost?'📡 Sharing live':'📡 Share my location'}</button><button class="chip" aria-pressed="${!!l.ghost}" data-act="spGhost">👻 Ghost</button><button class="chip" data-act="spFit">🎯 Find us</button><button class="chip" aria-pressed="${!!l.tuts}" data-act="spTuts">📌 Next tutorials</button><button class="chip" data-act="spDir">🧭 Directions</button><button class="chip" data-act="spFree">🚪 Free rooms</button></div></div>
     <div id="spmap" class="spmap" role="application" aria-label="Map of the GUC campus with both of you on it"></div>
     <p class="small muted" style="margin:8px 0 0">${l.tuts?'📌 Pins show each of your next tutorials (tutorials only). ':''}Drag to move, pinch or scroll to zoom, tap a building to see who's there. Press and hold to save one of <b>our places</b> or drop a <b>meet-me pin</b>. Location is only shared while the app is open, and only with ${WHO[YOU].name}.</p></section>
   ${homeCard()}
