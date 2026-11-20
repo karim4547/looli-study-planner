@@ -135,7 +135,7 @@ nav button{position:relative;z-index:1;transition:color .3s,opacity .3s}nav butt
 main>.row h2,main>div>.row h2{font-size:28px;text-decoration:underline wavy light-dark(#f3b0c6,#7a3a52) 2px;text-underline-offset:8px}
 .live.on{border:2px solid transparent;background:linear-gradient(var(--page),var(--page)) padding-box,linear-gradient(90deg,#e2638f,#9b7fd4,#ee9257,#e2638f) border-box;background-size:100% 100%,300% 100%;animation:border 4s linear infinite}
 @keyframes border{to{background-position:0 0,300% 0}}
-.nudges{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px;margin:-4px 0 8px;scroll-snap-type:x mandatory}
+.pings{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px;margin:-4px 0 8px;scroll-snap-type:x mandatory}
 .nudge{flex:0 0 min(320px,85%);scroll-snap-align:start;display:flex;gap:12px;align-items:center;background:var(--page);border:1px solid var(--line);border-radius:20px;padding:12px 14px;box-shadow:var(--shadow)}
 .nudge>div{flex:1}.nudge b{display:block;font-size:15px}.nudge small{color:var(--muted);font-size:13px;line-height:1.35;display:block}
 .nic{width:40px;height:40px;flex:none;border-radius:14px;display:grid;place-items:center;color:var(--c);background:color-mix(in srgb,var(--c) 16%,transparent);animation:bob 3s ease-in-out infinite}
@@ -244,6 +244,73 @@ td input{min-height:40px;padding:6px 10px}td.n input{text-align:right}.sheet td:
 .blines .bok{color:#ffb347;text-shadow:0 0 12px #ffb347}@keyframes bl{to{opacity:1}}
 @media(max-width:600px){:root[data-skin=hud] .top .reactor{width:44px;height:44px}:root[data-skin=hud] .top p{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.reactor *,:root[data-skin=hud] .band::before{animation:none!important}}
+
+/* ===== Our space ===== */
+nav button.ping::after{content:"";position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 0 var(--warn);animation:pingdot 1.4s infinite}
+nav button{position:relative}
+@keyframes pingdot{70%{box-shadow:0 0 0 8px transparent}}
+.sphero{position:relative;overflow:hidden;background:radial-gradient(120% 140% at 50% -20%,light-dark(#ffe3ee,#2b1630) 0,transparent 60%),var(--page)}
+:root[data-skin=hud] .sphero{background:radial-gradient(120% 140% at 50% -20%,#0d3550 0,transparent 60%),var(--page)}
+.sphero::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(1.5px 1.5px at 12% 30%,var(--rose) 50%,transparent 51%),radial-gradient(1px 1px at 78% 22%,var(--rose) 50%,transparent 51%),radial-gradient(1.5px 1.5px at 60% 80%,var(--rose) 50%,transparent 51%),radial-gradient(1px 1px at 30% 70%,var(--rose) 50%,transparent 51%);opacity:.5;animation:twinkle 4s ease-in-out infinite alternate}
+@keyframes twinkle{to{opacity:.15}}
+.duo{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;position:relative}
+.pp{display:flex;align-items:center;gap:10px;min-width:0}.pp.you{flex-direction:row-reverse;text-align:right}
+.pp>div:last-child{display:flex;flex-direction:column;min-width:0}.pp span{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:24ch}
+.tie2{display:flex;flex-direction:column;align-items:center;font-weight:700}.tie2 span{font-size:20px}.tie2 small{color:var(--muted);font-weight:500}
+.av{position:relative;width:56px;height:66px;display:flex;flex-direction:column;align-items:center}
+.av b{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;font-size:26px;background:var(--page);border:3px solid var(--c);box-shadow:0 4px 14px #0003;position:relative;z-index:1}
+.av.karim{--c:#29d9ff}.av.looli{--c:#e2638f}
+.av i{position:absolute;right:-2px;top:-4px;font-style:normal;font-size:18px;z-index:2;filter:drop-shadow(0 1px 2px #0005)}
+.av em{font-style:normal;font-size:11px;font-weight:700;margin-top:2px;padding:1px 6px;border-radius:8px;background:var(--c);color:#fff}
+.av .ring{position:absolute;top:0;left:5px;width:46px;height:46px;border-radius:50%;border:3px solid var(--c);opacity:0}
+.av.fresh .ring{animation:ripple 2s ease-out infinite}.av.stale b{filter:grayscale(.7);opacity:.75}
+@keyframes ripple{0%{transform:scale(1);opacity:.7}100%{transform:scale(1.9);opacity:0}}
+.avwrap,.plwrap{background:none;border:0}
+.pings{display:flex;justify-content:center;gap:10px;margin:14px 0 6px;flex-wrap:wrap}
+.pingbtn{width:52px;height:52px;border-radius:50%;font-size:24px;border:1px solid var(--line);background:var(--page);cursor:pointer;transition:transform .15s;padding:0}
+.pingbtn:hover{transform:scale(1.12) rotate(-6deg)}.pingbtn:active{transform:scale(.9)}
+.spstats{justify-content:center;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted)}.spstats b{color:var(--ink)}
+.spmap{height:min(62vh,520px);border-radius:14px;overflow:hidden;margin-top:10px;border:1px solid var(--line);background:var(--grey)}
+:root[data-skin=hud] .spmap{border-radius:4px;filter:saturate(.9)}
+:root[data-skin=hud] .spmap .leaflet-tile-pane{filter:invert(1) hue-rotate(185deg) brightness(.85) contrast(1.1) saturate(.6)}
+.leaflet-container{font:inherit}
+.bld{fill:var(--rose);fill-opacity:.08;stroke:var(--rose);stroke-opacity:.5}.bld.pitch{fill:#4fa79a;fill-opacity:.15}
+.bldlbl{background:transparent;border:0;box-shadow:none;font-weight:700;font-size:11px;color:var(--ink);text-shadow:0 0 3px var(--page),0 0 3px var(--page)}
+.bldlbl::before{display:none}
+.tie{stroke:var(--rose);stroke-opacity:.8}
+.pl{display:flex;align-items:center;gap:4px;font-size:22px;white-space:nowrap;filter:drop-shadow(0 2px 3px #0005)}
+.pl span{font-size:11px;font-weight:700;background:var(--page);color:var(--ink);padding:1px 6px;border-radius:8px}
+.meet{font-size:32px;animation:bob 1.2s ease-in-out infinite;white-space:nowrap}.meet span{font-size:12px;font-weight:700;background:var(--warn);color:#fff;padding:2px 8px;border-radius:9px;vertical-align:middle}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.spgrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.moods{display:flex;flex-wrap:wrap;gap:6px}
+.mood{font-size:22px;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:var(--page);cursor:pointer}
+.mood[aria-pressed=true]{background:var(--rose);border-color:var(--rose);transform:scale(1.08)}.mood.big{font-size:30px;width:64px;height:64px}
+.qd{font-size:18px;font-weight:600;margin:6px 0 10px}
+.ans{padding:8px 10px;border-radius:10px;background:var(--grey);margin:6px 0}.ans.reveal{animation:flipin .6s ease}
+@keyframes flipin{from{transform:rotateX(90deg);opacity:0}}
+.cd{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}.cd span{flex:1}.cd b{color:var(--rose)}
+.x{border:0;background:transparent;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:12px}
+.note{position:relative;padding:12px 12px 26px;border-radius:4px;color:#3a2a2f;min-height:90px;box-shadow:0 6px 14px #0002;transform:rotate(-1.5deg);transition:transform .2s}
+.note:nth-child(even){transform:rotate(1.2deg)}.note:hover{transform:rotate(0) scale(1.03)}
+.note p{margin:0;white-space:pre-wrap;word-break:break-word}.note small{position:absolute;left:12px;bottom:6px;font-size:11px;opacity:.75}.note .x{position:absolute;top:2px;right:6px;color:#3a2a2f}
+.note.c0,.sw.c0 span{background:#ffd6e5}.note.c1,.sw.c1 span{background:#fff1b8}.note.c2,.sw.c2 span{background:#c9f2e3}.note.c3,.sw.c3 span{background:#d9e4ff}.note.c4,.sw.c4 span{background:#ead9ff}
+.sw input{position:absolute;opacity:0}.sw span{display:inline-block;width:30px;height:30px;border-radius:50%;border:2px solid transparent;cursor:pointer}.sw input:checked+span{border-color:var(--ink)}.sw input:focus-visible+span{outline:2px solid var(--rose)}
+.ttt{display:grid;grid-template-columns:repeat(3,64px);gap:6px;margin:10px 0}
+.ttt button{height:64px;border-radius:12px;border:1px solid var(--line);background:var(--grey);font-size:30px;cursor:pointer}
+.ttt button:not(:disabled):hover{background:var(--band2)}.ttt button.karim,.ttt button.looli{animation:pop .3s}
+.c4{display:grid;grid-template-columns:repeat(7,34px);gap:5px;padding:8px;border-radius:12px;background:light-dark(#4b6cb7,#0b2438);width:max-content;margin:10px 0}
+.c4 button{width:34px;height:34px;border-radius:50%;border:0;background:var(--page);cursor:pointer;padding:0}
+.c4 button.karim{background:#29d9ff;animation:drop .35s ease-in}.c4 button.looli{background:#e2638f;animation:drop .35s ease-in}
+.c4 button:disabled{cursor:default}
+@keyframes drop{from{transform:translateY(-120px)}}@keyframes pop{from{transform:scale(.4)}}
+.spsetup ol{padding-left:20px;line-height:1.6}
+.hearts{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+.hearts span{position:absolute;bottom:-40px;animation:floatup 3s ease-in forwards}
+@keyframes floatup{to{transform:translate(var(--dx),-110vh) rotate(20deg);opacity:0}}
+@media(max-width:600px){.ttt{grid-template-columns:repeat(3,56px)}.ttt button{height:56px}.c4{grid-template-columns:repeat(7,30px)}.c4 button{width:30px;height:30px}.pp span{max-width:12ch}.av{transform:scale(.9)}}
+@media(prefers-reduced-motion:reduce){.av .ring,.meet,.sphero::before{animation:none!important}}
 </style>
 </head>
 <body>
@@ -269,7 +336,7 @@ td input{min-height:40px;padding:6px 10px}td.n input{text-align:right}.sheet td:
     <button class="gear" data-act="settings" aria-label="Settings and backup"><svg width="22" height="22"><use href="#cog"/></svg></button>
   </div>
   <nav aria-label="Sections"><span class="ind" aria-hidden="true"></span>
-    <button data-act="go" data-id="today">Today</button><button data-act="go" data-id="courses">Courses &amp; grades</button><button data-act="go" data-id="schedule">Study schedule</button><button data-act="go" data-id="calendar">Calendar</button><button data-act="go" data-id="tasks">To-do list</button>
+    <button data-act="go" data-id="today">Today</button><button data-act="go" data-id="space">Our space 💞</button><button data-act="go" data-id="courses">Courses &amp; grades</button><button data-act="go" data-id="schedule">Study schedule</button><button data-act="go" data-id="calendar">Calendar</button><button data-act="go" data-id="tasks">To-do list</button>
   </nav>
 </header>
 <main id="view"></main>
@@ -472,7 +539,7 @@ function nudges(){const n=[],icon=(i,c)=>`<span class="nic" style="--c:${c||'var
   if(risk)n.push([icon('target',risk.c.color),`${CN(risk.c)} needs some love`,risk.v.k==='miss'?`Goal ${risk.c.goal} is out of reach. Pick a new one.`:`${fx(risk.v.need)}% needed on what's left for ${risk.c.goal}`,'oCourse',risk.c.id,'See plan']);
   const st=streak();if(!S.log.days[today()])n.push([icon('flame','#ee9257'),st?`Keep your ${st}-day streak`:'Start a streak today','Tick one task or study session today.','go','tasks','Pick one']);
   if(!S.classes.some(k=>k.day===dayIdx()))n.push([icon('book','#9b7fd4'),'Free day, no classes','Perfect for a focused study session.','nSess',String(dayIdx()),'Plan one']);
-  return n.length?`<div class="nudges">${n.map(([i,t,d,a,id,l])=>`<div class="nudge">${i}<div><b>${t}</b><small>${esc(d)}</small></div><button class="chip" data-act="${a}" data-id="${esc(id)}">${l}</button></div>`).join('')}</div>`:''}
+  return n.length?`<div class="pings">${n.map(([i,t,d,a,id,l])=>`<div class="nudge">${i}<div><b>${t}</b><small>${esc(d)}</small></div><button class="chip" data-act="${a}" data-id="${esc(id)}">${l}</button></div>`).join('')}</div>`:''}
 function badgesHtml(){return BADGES.map(([id,t,dsc,,col])=>{const on=!!S.log.badges[id];return `<div class="badge${on?' on':''}" title="${esc(dsc)}">${medal(col,on)}<b>${esc(t)}</b><small>${on?'Unlocked':esc(dsc)}</small></div>`}).join('')}
 const isExamTitle=s=>/\b(quiz|exam|midterm|final|test)\b/i.test(s||'');
 function allEvents(){const ev=[];S.tasks.forEach(t=>{if(t.due)ev.push({date:t.due,title:CT(C(t.course),t.title),course:t.course,kind:t.done?'done':(isExamTitle(t.title)&&!/^revise/i.test(t.title)?'exam':'task')})});S.courses.forEach(c=>{if(c.exam&&!S.tasks.some(t=>t.course===c.id&&t.due===c.exam))ev.push({date:c.exam,title:CN(c)+' · '+(c.examName||'Exam'),course:c.id,kind:'exam'})});(S.events||[]).forEach(e=>ev.push({date:e.date,end:e.end,title:e.title,course:e.course,kind:'range'}));return ev}
@@ -675,6 +742,212 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#ov').hidden)cl
 function animate(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;let i=0;document.querySelectorAll('#view>*, #view .grid>*, #view .stats>*, #view .badge, #view .cell').forEach(el=>{el.classList.add('anim');el.style.animationDelay=Math.min(i++*35,700)+'ms'});document.querySelectorAll('#view .m1, #view .bar i, #view .lvring').forEach(el=>el.classList.add('grow'));document.querySelectorAll('[data-count]').forEach(el=>{const to=parseFloat(el.dataset.count);if(isNaN(to))return;const int=el.dataset.int,suf=el.dataset.suf||'',t0=performance.now();const f=t=>{const k=Math.min(1,(t-t0)/800),e=1-Math.pow(1-k,3),v=to*e;el.textContent=(int?Math.round(v):fx(v))+suf;if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
 addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(VIEWS.includes(h)&&h!==cur){cur=h;render(true)}});
 migrate();render(true);autoSync();
+
+/* ===================== OUR SPACE: shared map, nudges, notes, games (Karim + Looli only) =====================
+   Storage: issues labelled "space" in the private data repo. Each person's presence is one issue body (JSON),
+   shared state (games, places, dates, stats) is another, and append-only things (notes, nudges, answers) are comments.
+   Needs a key with Issues: read and write on that repo. Location is only shared while the app is open. */
+const CAMPUS={lat:29.98826,lng:31.44571};
+const WHO={karim:{name:'Karim',emoji:'🦾',color:'#29d9ff'},looli:{name:'Looli',emoji:'🎀',color:'#e2638f'}};
+const ME=PID,YOU=PID==='karim'?'looli':'karim';
+const SPK='space:'+PID;
+const SP={issues:{},pres:{},shared:null,comments:[],seen:0,err:'',loading:false,last:0,timer:null,watch:null,map:null,mk:{},line:null,pins:[],bld:null,lastSent:null,sentAt:0};
+try{Object.assign(SP,{seen:+(JSON.parse(localStorage.getItem(SPK))||{}).seen||0})}catch(e){}
+const spLocal=()=>{try{return JSON.parse(localStorage.getItem(SPK))||{}}catch(e){return {}}};
+const spSet=o=>{try{localStorage.setItem(SPK,JSON.stringify({...spLocal(),...o}))}catch(e){}};
+const DEFAULT_SHARED=()=>({ttt:{b:'.........',turn:'looli',win:'',score:{karim:0,looli:0}},c4:{b:'.'.repeat(42),turn:'karim',win:'',score:{karim:0,looli:0}},rps:{karim:'',looli:'',round:1,last:'',score:{karim:0,looli:0}},places:[],meet:null,dates:[],stats:{together:[],studyMins:0}});
+async function gh(path,opt={}){const c=syncCfg();if(!c.token)throw new Error('nokey');
+  const r=await fetch(`https://api.github.com/repos/${c.repo||'karim4547/looli-data'}${path}`,{cache:'no-store',...opt,headers:{Authorization:'Bearer '+c.token,Accept:'application/vnd.github+json','Content-Type':'application/json'}});
+  if(r.status===401||r.status===403||r.status===404){const e=new Error('perm');e.status=r.status;throw e}
+  if(!r.ok)throw new Error('http '+r.status);return r.status===204?null:r.json()}
+const enc=o=>'Our space data, managed by the planner app. Please don\'t edit by hand.\n\n```json\n'+JSON.stringify(o)+'\n```';
+const dec=b=>{const m=(b||'').match(/```json\n([\s\S]*?)\n```/);try{return m?JSON.parse(m[1]):null}catch(e){return null}};
+async function spIssue(title,init){if(SP.issues[title])return SP.issues[title];
+  const made=await gh('/issues',{method:'POST',body:JSON.stringify({title:'space:'+title,body:enc(init)})});
+  try{const list=await gh('/issues?state=open&per_page=100&sort=created&direction=asc');const first=list.find(i=>i.title==='space:'+title);if(first&&first.number<made.number){gh(`/issues/${made.number}`,{method:'PATCH',body:JSON.stringify({state:'closed'})}).catch(()=>{});SP.issues[title]=first;return first}}catch(e){}
+  SP.issues[title]=made;return made}
+async function spPull(){if(SP.loading)return;SP.loading=true;
+  try{const list=await gh('/issues?state=open&per_page=100&sort=created&direction=asc');const map={};
+    const dup=[];for(const i of list)if(i.title.startsWith('space:')&&!i.pull_request){const k=i.title.slice(6);if(!map[k])map[k]=i;else if(map[k].number>i.number){dup.push(map[k]);map[k]=i}else dup.push(i)}
+    for(const k in map)SP.issues[k]=map[k];
+    for(const i of dup)gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({state:'closed'})}).catch(()=>{});
+    for(const w of ['karim','looli'])SP.pres[w]=dec(SP.issues['presence:'+w]?.body)||SP.pres[w]||null;
+    SP.shared={...DEFAULT_SHARED(),...(dec(SP.issues['shared']?.body)||SP.shared||{})};
+    const board=await spIssue('board',{});const since=SP.since||'';const started=new Date(Date.now()-120000).toISOString();
+    let cm=[];for(let pg=1;pg<=5;pg++){const part=await gh(`/issues/${board.number}/comments?per_page=100&page=${pg}${since?'&since='+encodeURIComponent(since):''}`);cm=cm.concat(part);if(part.length<100)break}
+    for(const c of cm){if(SP.comments.some(x=>x.id===c.id))continue;const o=dec(c.body);if(o)SP.comments.push({...o,id:c.id,at:c.created_at})}
+    SP.comments.sort((a,b)=>a.at<b.at?-1:1);SP.since=started;SP.err='';SP.last=Date.now();spInbox();spTogether();
+  }catch(e){SP.err=e.message==='nokey'?'nokey':e.status?'perm':'net'}
+  finally{SP.loading=false}
+  if(cur==='space')spPaint()}
+async function spSaveShared(fn){await spPull();const s=SP.shared||DEFAULT_SHARED();fn(s);SP.shared=s;
+  const i=await spIssue('shared',s);await gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({body:enc(s)})});SP.issues['shared'].body=enc(s);spPaint()}
+async function spPost(o){const b=await spIssue('board',{});const c=await gh(`/issues/${b.number}/comments`,{method:'POST',body:JSON.stringify({body:enc({...o,from:ME,ts:Date.now()})})});
+  SP.comments.push({...o,from:ME,ts:Date.now(),id:c.id,at:c.created_at});spPaint()}
+async function spDel(id){const b=SP.issues.board;if(!b)return;await gh(`/issues/comments/${id}`,{method:'DELETE'});SP.comments=SP.comments.filter(c=>c.id!==id);spPaint()}
+/* ---------- my presence ---------- */
+function myNow(){const L=liveInfo();let cls='';if(L.curC){const c=C(L.curC.course);cls=`${CN(c)||L.curC.course} ${L.curC.kind}${L.curC.room?' · '+L.curC.room:''}`}
+  return {cls,next:L.next&&!L.nextDay?`${CN(C(L.next.course))||L.next.course} at ${PER[L.next.period]?.[0]||''}`:''}}
+function myPres(){const l=spLocal(),live=l.share&&!l.ghost&&SP.here;return {name:WHO[ME].name,skin:P.skin,ts:Date.now(),mood:l.mood||'',status:l.status||'',ghost:!!l.ghost,focus:l.focus||null,...myNow(),lat:live?SP.here.lat:null,lng:live?SP.here.lng:null,acc:live?Math.round(SP.here.acc):null}}
+async function spSendMe(extra={},force){const p={...myPres(),...extra};if(!force&&SP.lastSent){const moved=p.lat!=null&&SP.lastSent.lat!=null?distM(p,SP.lastSent):0;
+    if((p.lat==null)===(SP.lastSent.lat==null)&&moved<20&&Date.now()-SP.sentAt<110000&&p.mood===SP.lastSent.mood&&p.status===SP.lastSent.status&&p.ghost===SP.lastSent.ghost&&JSON.stringify(p.focus)===JSON.stringify(SP.lastSent.focus)&&p.cls===SP.lastSent.cls)return}
+  try{const i=await spIssue('presence:'+ME,p);await gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({body:enc(p)})});SP.pres[ME]=p;SP.lastSent=p;SP.sentAt=Date.now();spTogether();if(cur==='space')spPaint()}catch(e){}}
+function spLocate(on){if(!navigator.geolocation){toast('This browser can\'t share location.');return}
+  if(SP.watch!=null){navigator.geolocation.clearWatch(SP.watch);SP.watch=null}
+  if(!on)return;SP.watch=navigator.geolocation.watchPosition(pos=>{const {latitude:lat,longitude:lng,accuracy:acc}=pos.coords;SP.here={lat,lng,acc};if(!spLocal().ghost)spSendMe()},
+    err=>{if(err.code===1){spSet({share:false});toast('Location is blocked for this site. Allow it in the browser settings to show up on the map.')}},{enableHighAccuracy:true,maximumAge:15000,timeout:30000})}
+/* ---------- geometry & places ---------- */
+function distM(a,b){const R=6371000,t=x=>x*Math.PI/180,dl=t(b.lat-a.lat),dg=t(b.lng-a.lng),h=Math.sin(dl/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dg/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+const fmtD=m=>m<1000?Math.round(m)+' m':(m/1000).toFixed(m<10000?1:0)+' km';
+const ago=ts=>{const s=(Date.now()-ts)/1000;return s<60?'just now':s<3600?Math.round(s/60)+' min ago':s<86400?Math.round(s/3600)+' h ago':Math.round(s/86400)+' d ago'};
+const onCampus=p=>p&&p.lat!=null&&distM(p,CAMPUS)<700;
+function inPoly(pt,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const [yi,xi]=poly[i],[yj,xj]=poly[j];if(((yi>pt.lat)!==(yj>pt.lat))&&(pt.lng<(xj-xi)*(pt.lat-yi)/(yj-yi)+xi))c=!c}return c}
+function whereIs(p){if(!p||p.lat==null)return '';const b=(SP.bld||[]).find(b=>b.label&&inPoly(p,b.pts));if(b)return 'in '+b.label;
+  const pl=(SP.shared?.places||[]).map(x=>({...x,d:distM(p,x)})).sort((a,b)=>a.d-b.d)[0];if(pl&&pl.d<40)return 'at '+pl.name;return onCampus(p)?'on campus':''}
+async function spBuildings(){if(SP.bld)return;try{const c=JSON.parse(localStorage.getItem('guc-buildings')||'null');if(c&&Date.now()-c.t<30*864e5){SP.bld=c.b;return}}catch(e){}
+  try{const q=`[out:json][timeout:25];(way["building"](29.982,31.437,29.994,31.454);way["amenity"](29.982,31.437,29.994,31.454);way["leisure"](29.982,31.437,29.994,31.454););out geom;`;
+    const r=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)});const j=await r.json();
+    SP.bld=j.elements.filter(e=>e.geometry&&e.geometry.length>2).map(e=>({pts:e.geometry.map(g=>[g.lat,g.lon]),label:(e.tags.name||e.tags['building:name']||e.tags.ref||(e.tags.leisure==='pitch'?'Pitch':e.tags.amenity==='parking'?'':'')||'').slice(0,28),kind:e.tags.leisure||e.tags.amenity||'building'}));
+    try{localStorage.setItem('guc-buildings',JSON.stringify({t:Date.now(),b:SP.bld}))}catch(e){}}catch(e){SP.bld=[]}}
+/* ---------- the map ---------- */
+function loadLeaflet(){if(window.L&&window.L.map)return Promise.resolve();if(SP.lf)return SP.lf;
+  SP.lf=new Promise((ok,no)=>{const c=document.createElement('link');c.rel='stylesheet';c.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';document.head.append(c);
+    const s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';s.onload=ok;s.onerror=no;document.head.append(s)});return SP.lf}
+const avatarHtml=(w,p)=>{const fresh=p&&Date.now()-p.ts<5*60000;return `<div class="av ${w} ${fresh?'fresh':'stale'}"><span class="ring"></span><b>${WHO[w].emoji}</b>${p?.mood?`<i>${esc(p.mood)}</i>`:''}<em>${WHO[w].name}</em></div>`};
+async function spMap(){const el=$('#spmap');if(!el)return;try{await loadLeaflet()}catch(e){el.innerHTML='<p class="muted" style="padding:20px">The map couldn\'t load. Check the internet connection.</p>';return}
+  const Lf=window.L;if(!Lf||!Lf.map){el.innerHTML='<p class="muted" style="padding:20px">The map couldn\'t load. Check the internet connection.</p>';return}if(SP.map&&SP.map._container!==el){SP.map.remove();SP.map=null;SP.mk={};SP.line=null;SP.pinLayer=null;SP.bLayer=null}
+  if(!SP.map){SP.map=Lf.map(el,{zoomControl:true,attributionControl:true}).setView([CAMPUS.lat,CAMPUS.lng],17);
+    Lf.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:20,maxNativeZoom:19,attribution:'© OpenStreetMap'}).addTo(SP.map);
+    SP.pinLayer=Lf.layerGroup().addTo(SP.map);SP.bLayer=Lf.layerGroup().addTo(SP.map);
+    SP.map.on('contextmenu',e=>spPinMenu(e.latlng));
+    spBuildings().then(()=>{if(!SP.map)return;for(const b of SP.bld||[]){const poly=Lf.polygon(b.pts,{className:'bld '+b.kind,weight:1}).addTo(SP.bLayer);if(b.label)poly.bindTooltip(b.label,{permanent:SP.map.getZoom()>=18,direction:'center',className:'bldlbl'})}spPaint()})}
+  spMarkers()}
+function spMarkers(){const Lf=window.L;if(!SP.map||!Lf)return;
+  for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w];
+    if(!p||p.lat==null){if(SP.mk[w]){SP.mk[w].remove();delete SP.mk[w]}continue}
+    const ic=Lf.divIcon({className:'avwrap',html:avatarHtml(w,p),iconSize:[64,74],iconAnchor:[32,58]});
+    if(SP.mk[w]){SP.mk[w].setLatLng([p.lat,p.lng]).setIcon(ic)}else SP.mk[w]=Lf.marker([p.lat,p.lng],{icon:ic,zIndexOffset:w===ME?500:1000}).addTo(SP.map).on('click',()=>spWho(w))}
+  const a=SP.mk.karim,b=SP.mk.looli;if(a&&b){const ll=[a.getLatLng(),b.getLatLng()];if(SP.line)SP.line.setLatLngs(ll);else SP.line=Lf.polyline(ll,{className:'tie',weight:3,dashArray:'6 8'}).addTo(SP.map)}else if(SP.line){SP.line.remove();SP.line=null}
+  SP.pinLayer.clearLayers();const s=SP.shared||{};
+  for(const pl of s.places||[])Lf.marker([pl.lat,pl.lng],{icon:Lf.divIcon({className:'plwrap',html:`<div class="pl">${esc(pl.emoji||'💗')}<span>${esc(pl.name)}</span></div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(SP.pinLayer).on('click',()=>spPlace(pl));
+  if(s.meet&&s.meet.until>Date.now())Lf.marker([s.meet.lat,s.meet.lng],{icon:Lf.divIcon({className:'plwrap',html:`<div class="meet">📍<span>${esc(WHO[s.meet.by]?.name||'')}: ${esc(s.meet.msg||'Meet me here')}${s.meet.time?' · '+esc(s.meet.time):''}</span></div>`,iconSize:[40,40],iconAnchor:[20,36]})}).addTo(SP.pinLayer)}
+function spFit(){if(!SP.map)return;const pts=Object.values(SP.mk).map(m=>m.getLatLng());if(pts.length===2)SP.map.fitBounds(pts,{padding:[60,60],maxZoom:18});else if(pts.length)SP.map.setView(pts[0],18);else SP.map.setView([CAMPUS.lat,CAMPUS.lng],17)}
+function spPinMenu(ll){modal(`<h2>This spot</h2><p class="muted small">${ll.lat.toFixed(5)}, ${ll.lng.toFixed(5)}</p>
+  <form id="pinf"><label for="pn">Save it as one of our places</label><div class="row"><input id="pe" name="emoji" value="💗" maxlength="2" style="width:58px;text-align:center"><input id="pn" name="name" placeholder="e.g. our bench, the good coffee"></div>
+  <div class="row end" style="margin-top:10px"><button class="pri" name="k" value="place">Save place</button></div></form>
+  <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+  <form id="meetf"><label for="mm">Or ask ${WHO[YOU].name} to meet you here</label><input id="mm" name="msg" placeholder="Meet me here" maxlength="60"><label for="mt">When</label><input id="mt" name="time" type="time">
+  <div class="row end" style="margin-top:10px"><button type="button" class="ghost" data-act="close">Cancel</button><button class="pri">Drop the pin</button></div></form>`);
+  $('#pinf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target),name=(d.get('name')||'').trim();if(!name)return;close();spSaveShared(s=>{s.places=[...(s.places||[]),{id:uid(),name,emoji:d.get('emoji')||'💗',lat:ll.lat,lng:ll.lng,by:ME}]}).then(()=>toast('Saved to our places.'))};
+  $('#meetf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target);close();spSaveShared(s=>{s.meet={lat:ll.lat,lng:ll.lng,msg:(d.get('msg')||'Meet me here').trim(),time:d.get('time')||'',by:ME,until:Date.now()+6*3600e3}}).then(()=>{spPost({t:'ping',k:'meet'});toast('Pin dropped. '+WHO[YOU].name+' will see it.')})}}
+function spPlace(pl){modal(`<h2>${esc(pl.emoji)} ${esc(pl.name)}</h2><p class="muted">Saved by ${esc(WHO[pl.by]?.name||'')}</p><div class="row end"><button class="ghost" data-act="spDelPlace" data-id="${pl.id}">Remove</button><button class="pri" data-act="close">Close</button></div>`)}
+function spWho(w){const p=w===ME?myPres():SP.pres[w];if(!p)return;const d=SP.pres[ME]?.lat!=null&&p.lat!=null&&w!==ME?distM(SP.pres[ME],p):null;
+  modal(`<h2>${WHO[w].emoji} ${WHO[w].name} ${esc(p.mood||'')}</h2><p>${esc(p.status||'')}</p><p class="small muted">${[whereIs(p),p.cls?'in '+p.cls:'',d!=null?fmtD(d)+' away':'',p.ts?'updated '+ago(p.ts):''].filter(Boolean).join(' · ')}</p><div class="row end"><button class="pri" data-act="close">Close</button></div>`)}
+/* ---------- inbox: nudges arriving ---------- */
+const PINGS={heart:['💗','is thinking of you'],wave:['👋','is asking where you are'],coffee:['☕','wants a coffee break with you'],study:['📚','wants to study with you'],hug:['🫂','sent you a hug'],meet:['📍','dropped a pin for you on the map']};
+function spInbox(){const fresh=SP.comments.filter(c=>c.t==='ping'&&c.from===YOU&&c.ts>SP.seen);if(!fresh.length)return;
+  const last=fresh[fresh.length-1],pg=PINGS[last.k]||PINGS.heart;SP.seen=last.ts;spSet({seen:last.ts});floatHearts(pg[0]);toast(`${pg[0]} ${WHO[YOU].name} ${pg[1]}`);
+  const b=document.querySelector('nav [data-id=space]');if(b&&cur!=='space')b.classList.add('ping')}
+function floatHearts(e){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const box=document.createElement('div');box.className='hearts';box.setAttribute('aria-hidden','true');
+  for(let i=0;i<18;i++){const s=document.createElement('span');s.textContent=e;s.style.cssText=`left:${10+Math.random()*80}%;animation-delay:${Math.random()*.8}s;font-size:${20+Math.random()*22}px;--dx:${(Math.random()-.5)*120}px`;box.append(s)}
+  document.body.append(box);setTimeout(()=>box.remove(),3600)}
+/* ---------- together streak & study-together ---------- */
+function spTogether(){const a=SP.pres.karim,b=SP.pres.looli;if(!a||!b||a.lat==null||b.lat==null)return;if(Date.now()-a.ts>6e5||Date.now()-b.ts>6e5)return;
+  if(distM(a,b)<60){const d=today(),s=SP.shared;if(s&&!(s.stats?.together||[]).includes(d)){spSaveShared(x=>{x.stats=x.stats||{};x.stats.together=[...new Set([...(x.stats.together||[]),d])]}).then(()=>{floatHearts('💞');celebrate('Together on campus today! 💞')})}}}
+function streak(days){const set=new Set(days||[]);let n=0,d=new Date();if(!set.has(today()))d.setDate(d.getDate()-1);for(;;){const k=iso(d);if(!set.has(k))break;n++;d.setDate(d.getDate()-1)}return n}
+function focusLeft(f){return f&&f.until>Date.now()?Math.ceil((f.until-Date.now())/60000):0}
+/* ---------- daily question ---------- */
+const QS=['What made you smile today?','Which class would you skip forever if you could?','Describe our perfect lazy Friday.','What song is stuck in your head right now?','If we could teleport anywhere for one hour after uni, where?','What\'s one thing you\'re proud of this week?','Pick a snack that represents your mood today.','What do you want to be doing in 5 years?','Which Marvel hero would you be on exam day?','What\'s the best thing I ever said to you?','What are you secretly worried about this week?','Plan our next date in three words.','What\'s your comfort movie this month?','If today were a weather forecast, what would it be?','Name a tiny habit you want us to start together.','What\'s your favourite spot on campus and why?','What would you cook for me if you had to?','What\'s something you learned today that surprised you?','Which subject this term secretly fascinates you?','What do you miss most when we\'re apart?','What three things should be on our bucket list?','What\'s the funniest thing that happened today?','What\'s a compliment you\'d like to hear more often?','Rate your energy today out of 10 and why.','What\'s one goal for the next exam?','What\'s your dream study spot?','If we had a theme song, what would it be?','Which memory of us do you replay the most?','What would make tomorrow a 10/10 day?','What do you want to tell me but keep forgetting?'];
+const qIdx=d=>{let h=0;for(const ch of d)h=(h*31+ch.charCodeAt(0))>>>0;return h%QS.length};
+/* ---------- games ---------- */
+const T3=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const tttWin=b=>{for(const [a,c,d] of T3)if(b[a]!=='.'&&b[a]===b[c]&&b[a]===b[d])return b[a];return b.includes('.')?'':'draw'};
+const c4Win=b=>{const g=(r,c)=>r>=0&&r<6&&c>=0&&c<7?b[r*7+c]:'';for(let r=0;r<6;r++)for(let c=0;c<7;c++){const v=g(r,c);if(v==='.')continue;for(const [dr,dc] of [[0,1],[1,0],[1,1],[1,-1]])if([1,2,3].every(k=>g(r+dr*k,c+dc*k)===v))return v}return b.includes('.')?'':'draw'};
+const sym=w=>w==='karim'?'k':'l';const whoOf=s=>s==='k'?'karim':'looli';
+/* ---------- view ---------- */
+function spSetupCard(){const k=SP.err==='nokey';return `<div class="card spsetup"><h2>Our space needs one more key</h2>
+  <p>${k?'Connect your data first (Settings → GUC data sync), then come back here.':'Your current key can read the planner data but can\'t write to our shared space yet.'}</p>
+  ${k?'':`<ol class="small"><li>On GitHub: Settings → Developer settings → Fine-grained tokens → <b>Generate new token</b>.</li><li>Repository access: only <b>looli-data</b>.</li><li>Permissions: <b>Contents: Read</b> and <b>Issues: Read and write</b>.</li><li>Paste it below on both phones (it replaces the old key and does both jobs).</li></ol>
+  <form id="spkey" class="row"><input name="k" type="password" placeholder="github_pat_…" autocomplete="off" style="flex:1"><button class="pri">Save key</button></form>`}</div>`}
+function spView(){if(!SP.last&&!SP.err){spPull()}
+  const s=SP.shared||DEFAULT_SHARED(),me=myPres(),you=SP.pres[YOU],l=spLocal();
+  if(SP.err==='perm'||SP.err==='nokey')return `<div class="row"><h2>Our space</h2></div>${spSetupCard()}`;
+  const dist=me.lat!=null&&you?.lat!=null?distM(me,you):null,tg=streak(s.stats?.together),fy=focusLeft(you?.focus),fm=focusLeft(l.focus);
+  const d=today(),qa=SP.comments.filter(c=>c.t==='answer'&&c.day===d),mine=qa.find(c=>c.from===ME),theirs=qa.find(c=>c.from===YOU);
+  const notes=SP.comments.filter(c=>c.t==='note').slice(-24).reverse();
+  const youLine=you?[you.ghost?'👻 ghost mode':whereIs(you),you.cls?'in '+you.cls:'',fy?`focusing, ${fy} min left`:'',`seen ${ago(you.ts)}`].filter(Boolean).join(' · '):'hasn\'t opened the space yet';
+  const ttt=s.ttt,c4=s.c4,rps=s.rps;
+  return `<div class="row"><h2>Our space</h2><p class="muted small" style="margin:0">Just the two of you. ${SP.loading?'Syncing…':SP.err==='net'?'Offline, showing the last update.':SP.last?'Updated '+ago(SP.last):''}</p></div>
+  <section class="card sphero">
+    <div class="duo"><div class="pp me">${avatarHtml(ME,me)}<div><b>You</b><span>${esc(me.status||'')}</span></div></div>
+      <div class="tie2"><span>${dist!=null?fmtD(dist):'💞'}</span><small>${dist!=null?(dist<60?'together!':'apart'):'link'}</small></div>
+      <div class="pp you">${avatarHtml(YOU,you)}<div><b>${WHO[YOU].name}</b><span>${esc(you?.status||'')}</span></div></div></div>
+    <p class="small muted" style="text-align:center;margin:6px 0 0">${esc(youLine)}</p>
+    <div class="pings">${Object.entries(PINGS).filter(([k])=>k!=='meet').map(([k,[e,t]])=>`<button class="pingbtn" data-act="spPing" data-id="${k}" title="${WHO[YOU].name} ${t.replace('you','')}">${e}</button>`).join('')}</div>
+    <div class="row spstats"><span>💞 Together streak <b>${tg}</b> day${tg===1?'':'s'}</span><span>📚 Studied together <b>${Math.round(s.stats?.studyMins||0)}</b> min</span><span>🏆 Games ${(ttt.score[ME]||0)+(c4.score[ME]||0)+(rps.score[ME]||0)}–${(ttt.score[YOU]||0)+(c4.score[YOU]||0)+(rps.score[YOU]||0)}</span></div>
+  </section>
+  <section class="card spmapcard"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><h3 style="margin:0">GUC map</h3>
+    <div class="row" style="gap:6px"><button class="chip" aria-pressed="${!!l.share&&!l.ghost}" data-act="spShare">${l.share&&!l.ghost?'📡 Sharing live':'📡 Share my location'}</button><button class="chip" aria-pressed="${!!l.ghost}" data-act="spGhost">👻 Ghost</button><button class="chip" data-act="spFit">🎯 Find us</button></div></div>
+    <div id="spmap" class="spmap" role="application" aria-label="Map of the GUC campus with both of you on it"></div>
+    <p class="small muted" style="margin:8px 0 0">Press and hold anywhere to save one of <b>our places</b> or drop a <b>meet-me pin</b>. Location is only shared while the app is open, and only with ${WHO[YOU].name}.</p></section>
+  <div class="grid spgrid">
+    <section class="card"><h3>How I feel</h3><div class="moods">${['😊','🥰','😴','😵‍💫','🤓','😤','🥲','🔥','🍕','🎧'].map(m=>`<button class="mood" aria-pressed="${me.mood===m}" data-act="spMood" data-id="${m}">${m}</button>`).join('')}</div>
+      <form id="spst" class="row" style="margin-top:8px"><input name="s" maxlength="60" placeholder="Status, e.g. stuck in HVAC 😩" value="${esc(l.status||'')}" style="flex:1"><button class="ghost">Set</button></form></section>
+    <section class="card"><h3>Study together</h3>${fm?`<p class="big" style="margin:6px 0">${fm} min</p><p class="small muted">You're focusing${fy?` with ${WHO[YOU].name} 💞`:''}.</p><button class="ghost" data-act="spFocus" data-id="0">Stop</button>`:
+      `<p class="small muted">${fy?`${WHO[YOU].name} is focusing (${fy} min left). Join to study side by side.`:'Start a focus session; the other one sees it and can join.'}</p><div class="row">${fy?`<button class="pri" data-act="spFocus" data-id="join">Join ${WHO[YOU].name}</button>`:''}<button class="${fy?'ghost':'pri'}" data-act="spFocus" data-id="25">25 min</button><button class="ghost" data-act="spFocus" data-id="50">50 min</button></div>`}</section>
+    <section class="card"><h3>Question of the day</h3><p class="qd">${esc(QS[qIdx(d)])}</p>
+      ${mine?`<div class="ans"><b>You:</b> ${esc(mine.a)}</div>${theirs?`<div class="ans reveal"><b>${WHO[YOU].name}:</b> ${esc(theirs.a)}</div>`:`<p class="small muted">Waiting for ${WHO[YOU].name}… answers show once you've both answered.</p>`}`:
+      `<form id="spqa" class="row"><input name="a" maxlength="200" placeholder="Your answer" style="flex:1" required><button class="pri">Answer</button></form>${theirs?`<p class="small muted">🔒 ${WHO[YOU].name} already answered. Answer to unlock it.</p>`:''}`}</section>
+    <section class="card"><h3>Countdowns</h3>${(s.dates||[]).filter(x=>until(x.date)>=0).sort((a,b)=>a.date<b.date?-1:1).map(x=>`<div class="cd"><span>${esc(x.emoji||'⏳')} ${esc(x.name)}</span><b>${until(x.date)===0?'today!':until(x.date)+' d'}</b><button class="x" data-act="spDelDate" data-id="${x.id}" aria-label="Remove">×</button></div>`).join('')||'<p class="small muted">Nothing to count down to yet.</p>'}
+      <button class="ghost" data-act="spAddDate" style="margin-top:8px">Add a date</button></section>
+  </div>
+  <section class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Notes wall</h3><button class="pri" data-act="spNote">Leave a note</button></div>
+    <div class="notes">${notes.map(n=>`<div class="note c${n.c||0} ${n.from}"><p>${esc(n.text)}</p><small>${WHO[n.from]?.emoji||''} ${esc(WHO[n.from]?.name||'')} · ${ago(n.ts)}</small>${n.from===ME?`<button class="x" data-act="spDelNote" data-id="${n.id}" aria-label="Delete note">×</button>`:''}</div>`).join('')||'<p class="small muted">The wall is empty. Leave the first note.</p>'}</div></section>
+  <h2 style="margin-top:26px">Games</h2>
+  <div class="grid spgrid">
+    <section class="card game"><h3>Tic-tac-toe</h3><p class="small muted">${ttt.win?(ttt.win==='draw'?'Draw!':`${WHO[ttt.win].name} wins!`):ttt.turn===ME?'Your move':`${WHO[YOU].name}'s move`} · ${ttt.score[ME]||0}–${ttt.score[YOU]||0}</p>
+      <div class="ttt">${[...ttt.b].map((v,i)=>`<button data-act="spTTT" data-id="${i}" class="${v==='.'?'':whoOf(v)}" ${v!=='.'||ttt.win||ttt.turn!==ME?'disabled':''} aria-label="Square ${i+1}">${v==='.'?'':WHO[whoOf(v)].emoji}</button>`).join('')}</div>
+      ${ttt.win?'<button class="ghost" data-act="spNew" data-id="ttt">Play again</button>':''}</section>
+    <section class="card game"><h3>Connect four</h3><p class="small muted">${c4.win?(c4.win==='draw'?'Draw!':`${WHO[c4.win].name} wins!`):c4.turn===ME?'Your move: tap a column':`${WHO[YOU].name}'s move`} · ${c4.score[ME]||0}–${c4.score[YOU]||0}</p>
+      <div class="c4">${[...c4.b].map((v,i)=>`<button data-act="spC4" data-id="${i%7}" class="${v==='.'?'':whoOf(v)}" ${c4.win||c4.turn!==ME?'disabled':''} aria-label="Column ${i%7+1}"></button>`).join('')}</div>
+      ${c4.win?'<button class="ghost" data-act="spNew" data-id="c4">Play again</button>':''}</section>
+    <section class="card game"><h3>Rock, paper, scissors</h3><p class="small muted">Round ${rps.round} · ${rps.score[ME]||0}–${rps.score[YOU]||0}${rps.last?' · last: '+esc(rps.last):''}</p>
+      ${rps[ME]?`<p>You picked ${rps[ME]}. ${rps[YOU]?'':'Waiting for '+WHO[YOU].name+'…'}</p>`:`<div class="row">${['✊','✋','✌️'].map(x=>`<button class="mood big" data-act="spRPS" data-id="${x}">${x}</button>`).join('')}</div>${rps[YOU]?`<p class="small muted">${WHO[YOU].name} has picked. Your turn!</p>`:''}`}</section>
+  </div>`}
+function spPaint(){if(cur!=='space')return;const keep=$('#spmap');const y=scrollY;
+  if(keep&&SP.map){const v=document.createElement('div');v.innerHTML=spView();const m=v.querySelector('#spmap');m.replaceWith(keep);$('#view').replaceChildren(...v.childNodes);scrollTo(0,y);SP.map.invalidateSize();spMarkers()}
+  else{$('#view').innerHTML=spView();spMap()}spBind()}
+function spBind(){const f=$('#spst');if(f)f.onsubmit=e=>{e.preventDefault();spSet({status:new FormData(f).get('s').trim()});spSendMe({},true);toast('Status set.')};
+  const q=$('#spqa');if(q)q.onsubmit=e=>{e.preventDefault();const a=new FormData(q).get('a').trim();if(a)spPost({t:'answer',day:today(),a}).then(()=>{const t=SP.comments.find(c=>c.t==='answer'&&c.day===today()&&c.from===YOU);if(t)floatHearts('✨')})};
+  const k=$('#spkey');if(k)k.onsubmit=e=>{e.preventDefault();const t=new FormData(k).get('k').trim();if(!t)return;setSyncCfg({...syncCfg(),token:t});SP.err='';SP.last=0;spPull();toast('Key saved.')}}
+function spStart(){if(SP.timer)return;SP.timer=setInterval(()=>{if(document.hidden)return;spPull();if(spLocal().share)spSendMe();else spSendMe({},false)},20000);
+  if(spLocal().share&&!spLocal().ghost)spLocate(true);spPull().then(()=>spSendMe({},true))}
+Object.assign(A,{
+  spShare(){const on=!(spLocal().share&&!spLocal().ghost);spSet({share:on,ghost:false});spLocate(on);if(!on)spSendMe({},true);else toast('Sharing your location with '+WHO[YOU].name+' while the app is open.');spPaint()},
+  spGhost(){const g=!spLocal().ghost;spSet({ghost:g});if(g){spLocate(false);SP.here=null;spSendMe({},true);toast('Ghost mode: you\'re hidden from the map.')}else{if(spLocal().share)spLocate(true);spSendMe({},true)}spPaint()},
+  spFit(){spFit()},
+  spPing(k){spPost({t:'ping',k}).then(()=>{floatHearts(PINGS[k][0]);toast(`Sent ${PINGS[k][0]} to ${WHO[YOU].name}.`)}).catch(()=>toast('Couldn\'t send. Check the connection.'))},
+  spMood(m){spSet({mood:spLocal().mood===m?'':m});spSendMe({},true);spPaint()},
+  spNote(){modal(`<h2>Leave a note</h2><form id="nf"><label for="nt">Your note for ${WHO[YOU].name}</label><textarea id="nt" name="t" rows="4" maxlength="280" required></textarea><label>Colour</label><div class="row">${[0,1,2,3,4].map(i=>`<label class="sw c${i}"><input type="radio" name="c" value="${i}" ${i===0?'checked':''}><span></span></label>`).join('')}</div><div class="row end" style="margin-top:14px"><button type="button" class="ghost" data-act="close">Cancel</button><button class="pri">Stick it</button></div></form>`);
+    $('#nf').onsubmit=e=>{e.preventDefault();const d=new FormData(e.target);close();spPost({t:'note',text:d.get('t').trim(),c:+d.get('c')})}},
+  spDelNote(id){spDel(+id)},
+  spAddDate(){form('New countdown',[{k:'name',label:'What',req:1},{k:'emoji',label:'Emoji',value:'⏳'},{k:'date',label:'Date',type:'date',value:today(),req:1}],v=>{spSaveShared(s=>{s.dates=[...(s.dates||[]),{id:uid(),...v}]})})},
+  spDelDate(id){spSaveShared(s=>{s.dates=(s.dates||[]).filter(x=>x.id!==id)})},
+  spDelPlace(id){close();spSaveShared(s=>{s.places=(s.places||[]).filter(x=>x.id!==id)})},
+  spFocus(v){if(v==='0'){const f=spLocal().focus;spSet({focus:null});spSendMe({},true);if(f&&f.withYou)spSaveShared(s=>{s.stats.studyMins=(s.stats.studyMins||0)+Math.max(0,(Date.now()-f.start)/60000)});spPaint();return}
+    const you=SP.pres[YOU],join=v==='join'&&focusLeft(you?.focus);const until=join?you.focus.until:Date.now()+(+v)*60000;
+    spSet({focus:{until,start:Date.now(),withYou:!!join||!!focusLeft(you?.focus)}});spSendMe({},true);if(join)spPost({t:'ping',k:'study'});toast(join?`Studying with ${WHO[YOU].name} 💞`:'Focus on. '+WHO[YOU].name+' can see it.');spPaint();
+    clearTimeout(SP.ft);SP.ft=setTimeout(()=>{const f=spLocal().focus;if(f&&f.until<=Date.now()+1000){spSet({focus:null});if(f.withYou)spSaveShared(s=>{s.stats.studyMins=(s.stats.studyMins||0)+(f.until-f.start)/60000});celebrate('Focus session done! 🎉');spSendMe({},true)}},until-Date.now())},
+  spTTT(i){spSaveShared(s=>{const g=s.ttt;if(g.win||g.turn!==ME||g.b[i]!=='.')return;g.b=g.b.slice(0,+i)+sym(ME)+g.b.slice(+i+1);const w=tttWin(g.b);if(w){g.win=w==='draw'?'draw':whoOf(w);if(g.win!=='draw')g.score[g.win]=(g.score[g.win]||0)+1}else g.turn=YOU}).then(()=>{if(SP.shared.ttt.win===ME)celebrate('You win tic-tac-toe! 🏆')})},
+  spC4(col){spSaveShared(s=>{const g=s.c4;if(g.win||g.turn!==ME)return;col=+col;let r=5;while(r>=0&&g.b[r*7+col]!=='.')r--;if(r<0)return;const i=r*7+col;g.b=g.b.slice(0,i)+sym(ME)+g.b.slice(i+1);const w=c4Win(g.b);if(w){g.win=w==='draw'?'draw':whoOf(w);if(g.win!=='draw')g.score[g.win]=(g.score[g.win]||0)+1}else g.turn=YOU}).then(()=>{if(SP.shared.c4.win===ME)celebrate('Four in a row! 🏆')})},
+  spNew(k){spSaveShared(s=>{const d=DEFAULT_SHARED()[k];const loser=s[k].win&&s[k].win!=='draw'?(s[k].win==='karim'?'looli':'karim'):YOU;s[k]={...d,score:s[k].score,turn:loser}})},
+  spRPS(x){spSaveShared(s=>{const g=s.rps;if(g[ME])return;g[ME]=x;if(g[YOU]){const beats={'✊':'✌️','✋':'✊','✌️':'✋'},a=g[ME],b=g[YOU];const win=a===b?'':beats[a]===b?ME:YOU;if(win)g.score[win]=(g.score[win]||0)+1;
+      g.last=`${WHO[ME].name} ${a} vs ${b} ${WHO[YOU].name}: ${win?WHO[win].name+' wins':'tie'}`;g.karim='';g.looli='';g.round++}}).then(()=>{const g=SP.shared.rps;if(g.last&&g.last.includes(WHO[ME].name+' wins'))floatHearts('🏆')})}
+});
+V.space=()=>{spStart();setTimeout(()=>{spMap();spBind();document.querySelector('nav [data-id=space]')?.classList.remove('ping')},0);return spView()};
+VIEWS.push('space');if(location.hash==='#space'){cur='space';render()}
+if(syncCfg().token)setTimeout(spStart,1500);
+
 }
 </script>
 </body>
