@@ -316,6 +316,7 @@ function mergeData(d){let nm=0,nt=0,nc=0;S.dismissed=S.dismissed||{};
   if(Array.isArray(d.classes))S.classes=d.classes.map(k=>({...k,id:k.id||[k.day,k.period,k.course].join('-')}));
   if(Array.isArray(d.history))S.history=d.history;if(d.portalGpa)S.portalGpa=d.portalGpa;
   if(Array.isArray(d.events))S.events=d.events.map(e=>({...e,id:e.id||uid()}));
+  for(const k of d.removed||[]){S.dismissed[k]=1;S.tasks=S.tasks.filter(t=>t.key!==k)}
   if(d.name&&!S.nameSet)S.name=d.name;
   return {nm,nt,nc}}
 let syncing=false;
@@ -396,7 +397,8 @@ function nudges(){const n=[],icon=(i,c)=>`<span class="nic" style="--c:${c||'var
   if(!S.classes.some(k=>k.day===dayIdx()))n.push([icon('book','#9b7fd4'),'Free day, no classes','Perfect for a focused study session.','nSess',String(dayIdx()),'Plan one']);
   return n.length?`<div class="nudges">${n.map(([i,t,d,a,id,l])=>`<div class="nudge">${i}<div><b>${t}</b><small>${esc(d)}</small></div><button class="chip" data-act="${a}" data-id="${esc(id)}">${l}</button></div>`).join('')}</div>`:''}
 function badgesHtml(){return BADGES.map(([id,t,dsc,,col])=>{const on=!!S.log.badges[id];return `<div class="badge${on?' on':''}" title="${esc(dsc)}">${medal(col,on)}<b>${esc(t)}</b><small>${on?'Unlocked':esc(dsc)}</small></div>`}).join('')}
-function allEvents(){const ev=[];S.tasks.forEach(t=>{if(t.due)ev.push({date:t.due,title:t.title,course:t.course,kind:t.done?'done':'task'})});S.courses.forEach(c=>{if(c.exam)ev.push({date:c.exam,title:(c.examName||'Exam')+' · '+c.code,course:c.id,kind:'exam'})});(S.events||[]).forEach(e=>ev.push({date:e.date,end:e.end,title:e.title,course:e.course,kind:'range'}));return ev}
+const isExamTitle=s=>/\b(quiz|exam|midterm|final|test)\b/i.test(s||'');
+function allEvents(){const ev=[];S.tasks.forEach(t=>{if(t.due)ev.push({date:t.due,title:t.title,course:t.course,kind:t.done?'done':(isExamTitle(t.title)&&!/^revise/i.test(t.title)?'exam':'task')})});S.courses.forEach(c=>{if(c.exam&&!S.tasks.some(t=>t.course===c.id&&t.due===c.exam))ev.push({date:c.exam,title:(c.examName||'Exam')+' · '+c.code,course:c.id,kind:'exam'})});(S.events||[]).forEach(e=>ev.push({date:e.date,end:e.end,title:e.title,course:e.course,kind:'range'}));return ev}
 const eventsOn=d=>allEvents().filter(e=>e.end?d>=e.date&&d<=e.end:e.date===d).sort((a,b)=>(a.kind==='exam'?0:a.kind==='range'?2:1)-(b.kind==='exam'?0:b.kind==='range'?2:1));
 const evCol=e=>{const c=C(e.course);return c?c.color:'#d4457a'};
 function evLi(e,showDate){const c=C(e.course),n=until(e.date);return `<li class="evli ${e.kind}"><i class="dot" style="--c:${esc(evCol(e))}"></i><span class="t">${esc(e.title)}${showDate?`<br><span class="small muted">${new Date(e.date+'T00:00').toLocaleDateString('en',{weekday:'short',month:'short',day:'numeric'})}${e.end?' to '+new Date(e.end+'T00:00').toLocaleDateString('en',{month:'short',day:'numeric'}):''}</span>`:''}</span>${e.kind==='exam'?'<span class="tag late">Exam</span>':e.kind==='done'?'<span class="tag okt">Done</span>':showDate&&!e.end?`<span class="tag${n<=2?' late':''}">${n===0?'Today':n===1?'Tomorrow':'in '+n+' days'}</span>`:''}</li>`}
