@@ -336,6 +336,31 @@ nav button{position:relative}
 :root[data-skin=hud] .cmap .cav .disc{fill:#030a12}
 .cmap .radar{animation:sweep 6s linear infinite;pointer-events:none}@keyframes sweep{to{transform:rotate(360deg)}}
 :root[data-skin=hud] .cmctl button{border-radius:3px;background:#030a12;color:#29d9ff;border-color:#29d9ff66}
+
+.cmap .ctut{animation:popin .5s cubic-bezier(.3,1.6,.5,1)}
+.cmap .ctut .flag{stroke:var(--ink);stroke-width:1.5}.cmap .ctut .fl{fill:#ffb347}.cmap .ctut.looli .fl{fill:#e2638f}.cmap .ctut.karim .fl{fill:#29d9ff}
+.cmap .ctut .ico{font-size:9px;text-anchor:middle}
+.cmap .ctut .tag rect{fill:light-dark(#fff,#1a1216);stroke-width:1.5}.cmap .ctut.karim .tag rect{stroke:#29d9ff}.cmap .ctut.looli .tag rect{stroke:#e2638f}
+.cmap .ctut .tag text{font-size:7px;font-weight:800;text-anchor:middle;fill:var(--ink)}
+.cmap .ctut .when{font-size:6.5px;font-weight:700;text-anchor:middle;fill:var(--ink);paint-order:stroke;stroke:light-dark(#fff,#000);stroke-width:2.5}
+:root[data-skin=hud] .cmap .ctut .tag rect{fill:#030a12}:root[data-skin=hud] .cmap .ctut .flag{stroke:#bff8ff}
+.homemap{height:min(55vh,440px);border-radius:18px;overflow:hidden;margin-top:10px;border:1px solid var(--line)}
+.hmap{width:100%;height:100%;display:block}
+.hmap .hbg{fill:light-dark(#fff4f7,#1d1418)}
+.hmap .hroads polyline{fill:none;stroke:light-dark(#ead9df,#3c3236);stroke-linecap:round;stroke-linejoin:round}.hmap .hroads .r2{stroke:light-dark(#e4c9d2,#4a3c42)}
+.hmap .rglow{fill:none;stroke:#e2638f;stroke-opacity:.18;stroke-linecap:round;stroke-linejoin:round}
+.hmap .rline{fill:none;stroke:#e2638f;stroke-linecap:round;stroke-linejoin:round;animation:hmarch 1.2s linear infinite}
+@keyframes hmarch{to{stroke-dashoffset:-60}}
+.hmap .hpin .halo{fill:currentColor;opacity:.15;animation:cpulse 2.4s ease-out infinite;transform-box:fill-box;transform-origin:center}
+.hmap .hpin.karim{color:#29d9ff}.hmap .hpin.looli{color:#e2638f}
+.hmap .house{fill:light-dark(#fff,#2a2024);stroke:currentColor;stroke-width:3;stroke-linejoin:round}
+.hmap .em{font-size:14px;text-anchor:middle}.hmap .tag rect{fill:currentColor}.hmap .tag text{font-size:10px;font-weight:800;fill:#fff;text-anchor:middle}
+.hmap .guc{fill:light-dark(#fff,#2a2024);stroke:#ee9257;stroke-width:3}.hmap .gl{font-size:10px;font-weight:800;text-anchor:middle;fill:#ee9257}
+:root[data-skin=hud] .homemap{border-radius:4px;border-color:#29d9ff66}
+:root[data-skin=hud] .hmap .hbg{fill:#030a12}:root[data-skin=hud] .hmap .hroads polyline{stroke:#29d9ff;stroke-opacity:.18}
+:root[data-skin=hud] .hmap .rglow{stroke:#ffb347;stroke-opacity:.25}:root[data-skin=hud] .hmap .rline{stroke:#ffb347;filter:drop-shadow(0 0 4px #ffb347)}
+:root[data-skin=hud] .hmap .house,:root[data-skin=hud] .hmap .guc{fill:#030a12}
+@media(prefers-reduced-motion:reduce){.hmap .rline,.hmap .hpin .halo{animation:none!important}}
 @media(prefers-reduced-motion:reduce){.cmap .radar,.cmap .tie,.cmap .cav .pulse,.cmap .cmeet{animation:none!important}}
 .spgrid{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .moods{display:flex;flex-wrap:wrap;gap:6px}
@@ -806,15 +831,19 @@ const CAMPUS={lat:29.98826,lng:31.44571};
 const WHO={karim:{name:'Karim',emoji:'🦾',color:'#29d9ff'},looli:{name:'Looli',emoji:'🎀',color:'#e2638f'}};
 const ME=PID,YOU=PID==='karim'?'looli':'karim';
 const SPK='space:'+PID;
-const SP={issues:{},pres:{},shared:null,comments:[],seen:0,err:'',loading:false,last:0,timer:null,watch:null,map:null,mk:{},line:null,pins:[],bld:null,lastSent:null,sentAt:0};
+const SP={etag:{},issues:{},pres:{},shared:null,comments:[],seen:0,err:'',loading:false,last:0,timer:null,watch:null,map:null,mk:{},line:null,pins:[],bld:null,lastSent:null,sentAt:0};
 try{Object.assign(SP,{seen:+(JSON.parse(localStorage.getItem(SPK))||{}).seen||0})}catch(e){}
 const spLocal=()=>{try{return JSON.parse(localStorage.getItem(SPK))||{}}catch(e){return {}}};
 const spSet=o=>{try{localStorage.setItem(SPK,JSON.stringify({...spLocal(),...o}))}catch(e){}};
 const DEFAULT_SHARED=()=>({ttt:{b:'.........',turn:'looli',win:'',score:{karim:0,looli:0}},c4:{b:'.'.repeat(42),turn:'karim',win:'',score:{karim:0,looli:0}},rps:{karim:'',looli:'',round:1,last:'',score:{karim:0,looli:0}},places:[],meet:null,dates:[],stats:{together:[],studyMins:0}});
 async function gh(path,opt={}){const c=syncCfg();if(!c.token)throw new Error('nokey');
-  const r=await fetch(`https://api.github.com/repos/${c.repo||'karim4547/looli-data'}${path}`,{cache:'no-store',...opt,headers:{Authorization:'Bearer '+c.token,Accept:'application/vnd.github+json','Content-Type':'application/json'}});
+  const get=!opt.method||opt.method==='GET',hit=get&&SP.etag[path],h={Authorization:'Bearer '+c.token,Accept:'application/vnd.github+json','Content-Type':'application/json'};
+  if(hit)h['If-None-Match']=hit.e;
+  const r=await fetch(`https://api.github.com/repos/${c.repo||'karim4547/looli-data'}${path}`,{cache:'no-store',...opt,headers:h});
+  if(r.status===304&&hit)return hit.d;
   if(r.status===401||r.status===403||r.status===404){const e=new Error('perm');e.status=r.status;throw e}
-  if(!r.ok)throw new Error('http '+r.status);return r.status===204?null:r.json()}
+  if(!r.ok)throw new Error('http '+r.status);const d=r.status===204?null:await r.json();
+  if(get&&r.headers.get('ETag'))SP.etag[path]={e:r.headers.get('ETag'),d};return d}
 const enc=o=>'Our space data, managed by the planner app. Please don\'t edit by hand.\n\n```json\n'+JSON.stringify(o)+'\n```';
 const dec=b=>{const m=(b||'').match(/```json\n([\s\S]*?)\n```/);try{return m?JSON.parse(m[1]):null}catch(e){return null}};
 async function spIssue(title,init){if(SP.issues[title])return SP.issues[title];
@@ -828,14 +857,14 @@ async function spPull(){if(SP.loading)return;SP.loading=true;
     for(const i of dup)gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({state:'closed'})}).catch(()=>{});
     for(const w of ['karim','looli'])SP.pres[w]=dec(SP.issues['presence:'+w]?.body)||SP.pres[w]||null;
     SP.shared={...DEFAULT_SHARED(),...(dec(SP.issues['shared']?.body)||SP.shared||{})};
-    const board=await spIssue('board',{});const since=SP.since||'';const started=new Date(Date.now()-120000).toISOString();
+    const board=await spIssue('board',{});const since=SP.since||'';const started=new Date(Math.floor((Date.now()-180000)/3600000)*3600000).toISOString();
     let cm=[];for(let pg=1;pg<=5;pg++){const part=await gh(`/issues/${board.number}/comments?per_page=100&page=${pg}${since?'&since='+encodeURIComponent(since):''}`);cm=cm.concat(part);if(part.length<100)break}
     for(const c of cm){if(SP.comments.some(x=>x.id===c.id))continue;const o=dec(c.body);if(o)SP.comments.push({...o,id:c.id,at:c.created_at})}
     SP.comments.sort((a,b)=>a.at<b.at?-1:1);SP.since=started;SP.err='';SP.last=Date.now();spInbox();spTogether();
   }catch(e){SP.err=e.message==='nokey'?'nokey':e.status?'perm':'net'}
   finally{SP.loading=false}
   if(cur==='space')spPaint()}
-async function spSaveShared(fn){await spPull();const s=SP.shared||DEFAULT_SHARED();fn(s);SP.shared=s;
+async function spSaveShared(fn){try{const i=await spIssue('shared',DEFAULT_SHARED());const f=await gh(`/issues/${i.number}`);SP.issues['shared']=f;SP.shared={...DEFAULT_SHARED(),...(dec(f.body)||{})}}catch(e){await spPull()}const s=SP.shared||DEFAULT_SHARED();fn(s);SP.shared=s;spPaint();
   const i=await spIssue('shared',s);await gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({body:enc(s)})});SP.issues['shared'].body=enc(s);spPaint()}
 async function spPost(o){const b=await spIssue('board',{});const c=await gh(`/issues/${b.number}/comments`,{method:'POST',body:JSON.stringify({body:enc({...o,from:ME,ts:Date.now()})})});
   SP.comments.push({...o,from:ME,ts:Date.now(),id:c.id,at:c.created_at});spPaint()}
@@ -843,7 +872,7 @@ async function spDel(id){const b=SP.issues.board;if(!b)return;await gh(`/issues/
 /* ---------- my presence ---------- */
 function myNow(){const L=liveInfo();let cls='';if(L.curC){const c=C(L.curC.course);cls=`${CN(c)||L.curC.course} ${L.curC.kind}${L.curC.room?' · '+L.curC.room:''}`}
   return {cls,room:L.curC?.room||'',next:L.next&&!L.nextDay?`${CN(C(L.next.course))||L.next.course} at ${PER[L.next.period]?.[0]||''}`:''}}
-function myPres(){const l=spLocal(),live=l.share&&!l.ghost&&SP.here;return {name:WHO[ME].name,skin:P.skin,ts:Date.now(),mood:l.mood||'',status:l.status||'',ghost:!!l.ghost,focus:l.focus||null,...myNow(),lat:live?SP.here.lat:null,lng:live?SP.here.lng:null,acc:live?Math.round(SP.here.acc):null}}
+function myPres(){const l=spLocal(),live=l.share&&!l.ghost&&SP.here;return {nt:nextTut(),name:WHO[ME].name,skin:P.skin,ts:Date.now(),mood:l.mood||'',status:l.status||'',ghost:!!l.ghost,focus:l.focus||null,...myNow(),lat:live?SP.here.lat:null,lng:live?SP.here.lng:null,acc:live?Math.round(SP.here.acc):null}}
 async function spSendMe(extra={},force){const p={...myPres(),...extra};if(!force&&SP.lastSent){const moved=p.lat!=null&&SP.lastSent.lat!=null?distM(p,SP.lastSent):0;
     if((p.lat==null)===(SP.lastSent.lat==null)&&moved<20&&Date.now()-SP.sentAt<110000&&p.mood===SP.lastSent.mood&&p.status===SP.lastSent.status&&p.ghost===SP.lastSent.ghost&&JSON.stringify(p.focus)===JSON.stringify(SP.lastSent.focus)&&p.cls===SP.lastSent.cls)return}
   try{const i=await spIssue('presence:'+ME,p);await gh(`/issues/${i.number}`,{method:'PATCH',body:JSON.stringify({body:enc(p)})});SP.pres[ME]=p;SP.lastSent=p;SP.sentAt=Date.now();spTogether();if(cur==='space')spPaint()}catch(e){}}
@@ -904,7 +933,7 @@ function campusSvg(){const [bx,by,bw,bh]=CM.box,hud=HUD;
   <g class="cartouche" transform="translate(${bx+14},${by+14})"><rect width="${hud?250:230}" height="40" rx="${hud?2:20}"/><text x="18" y="26">${hud?'GUC // CAMPUS GRID':'GUC · our little campus 💞'}</text></g>
 </svg>`}
 const CV={s:1,x:0,y:0};
-function cmApply(){const g=$('#cvp');if(g)g.setAttribute('transform',`translate(${CV.x} ${CV.y}) scale(${CV.s})`);const m=$('#cmap');if(m){m.dataset.z=CV.s>=2.2?'far':CV.s>=1.4?'mid':'near';m.style.setProperty('--avk',(1.5/Math.pow(CV.s,.75)).toFixed(3))}}
+function cmApply(){const [bx,by,bw,bh]=CM.box,cx=bx+bw/2,cy=by+bh/2;CV.x=Math.max(bx-cx*CV.s,Math.min(bx+bw-cx*CV.s,CV.x));CV.y=Math.max(by-cy*CV.s,Math.min(by+bh-cy*CV.s,CV.y));const g=$('#cvp');if(g)g.setAttribute('transform',`translate(${CV.x} ${CV.y}) scale(${CV.s})`);const m=$('#cmap');if(m){m.dataset.z=CV.s>=2.2?'far':CV.s>=1.4?'mid':'near';m.style.setProperty('--avk',(1.5/Math.pow(CV.s,.75)).toFixed(3))}}
 function cmToSvg(ev){const svg=$('#cmap'),pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());return [(p.x-CV.x)/CV.s,(p.y-CV.y)/CV.s,p.x,p.y]}
 function cmZoom(f,cx,cy){const ns=Math.max(.8,Math.min(8,CV.s*f));if(cx==null){const [bx,by,bw,bh]=CM.box;cx=bx+bw/2;cy=by+bh/2}CV.x=cx-(cx-CV.x)*ns/CV.s;CV.y=cy-(cy-CV.y)*ns/CV.s;CV.s=ns;cmApply()}
 function cmFocus(xy,s=2.6){const [bx,by,bw,bh]=CM.box;CV.s=s;CV.x=bx+bw/2-xy[0]*s;CV.y=by+bh/2-xy[1]*s;cmApply()}
@@ -926,7 +955,7 @@ function cmTap(x,y,e){const av=e.target.closest&&e.target.closest('[data-who]');
   modal(`<h2>${esc(b.name)}</h2><p class="muted small">${b.lv>1?b.lv+' floors':'Ground floor'}${here.length?' · '+here.map(w=>WHO[w].emoji+' '+(w===ME?'you':WHO[w].name)).join(', ')+' here now':''}</p>
     ${mine.length?`<h3>Your classes here</h3><ul class="list">${mine.map(k=>`<li class="item"><span>${esc(DAYS[k.day])} ${esc(PER[k.period]?.[0]||'')} · ${esc(CN(C(k.course))||k.course)} ${esc(k.kind||'')} <span class="muted">${esc(k.room||'')}</span></span></li>`).join('')}</ul>`:''}
     <div class="row end"><button class="ghost" data-act="spPinHere" data-id="${b.c[0].toFixed(1)},${b.c[1].toFixed(1)}">Pin something here</button><button class="pri" data-act="close">Close</button></div>`)}
-function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=campusSvg()+`<div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button></div>`;cmBind()}spMarkers()}
+function spMap(){const el=$('#spmap');if(!el)return;if(!el.querySelector('#cmap')){el.innerHTML=campusSvg()+`<div class="cmctl"><button data-act="cmZ" data-id="in" aria-label="Zoom in">+</button><button data-act="cmZ" data-id="out" aria-label="Zoom out">−</button><button data-act="cmHome" aria-label="Back to the whole campus" title="Back to GUC">🏫</button></div>`;cmBind()}spMarkers()}
 function spMarkers(){const g=$('#cppl'),pg=$('#cpins');if(!g)return;let h='';const spots={};
   for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],s=spotOf(p);if(!s)continue;spots[w]=s;const fresh=p&&Date.now()-p.ts<5*60000;
     h+=`<g class="cav ${w} ${fresh?'fresh':'stale'} ${s.gps?'gps':'cls'}" data-who="${w}" transform="translate(${s.xy[0].toFixed(1)},${s.xy[1].toFixed(1)})"><g class="cavk"><g class="cavs"><circle class="pulse" r="11"/><circle class="disc" r="11"/><text class="em" y="4.5">${WHO[w].emoji}</text>${p.mood?`<text class="md" x="9" y="-8">${esc(p.mood)}</text>`:''}<g class="tag" transform="translate(0,20)"><rect x="-20" y="-6" width="40" height="12" rx="6"/><text y="3">${s.gps?'':'📚 '}${WHO[w].name}</text></g></g></g></g>`}
@@ -934,7 +963,7 @@ function spMarkers(){const g=$('#cppl'),pg=$('#cpins');if(!g)return;let h='';con
   g.innerHTML=h;const s=SP.shared||{};let ph='';
   for(const pl of s.places||[]){const [x,y]=toXY(pl);ph+=`<g class="cpl" data-pl="${pl.id}" transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><text class="ico">${esc(pl.emoji||'💗')}</text><text class="pn" y="11">${esc(pl.name)}</text></g>`}
   if(s.meet&&s.meet.until>Date.now()){const [x,y]=toXY(s.meet);ph+=`<g transform="translate(${x.toFixed(1)},${y.toFixed(1)})"><g class="cmeet"><text class="ico">📍</text><text class="pn" y="12">${esc(WHO[s.meet.by]?.name||'')}: ${esc(s.meet.msg||'Meet me here')}${s.meet.time?' · '+esc(s.meet.time):''}</text></g></g>`}
-  if(pg)pg.innerHTML=ph;SP.spots=spots}
+  if(pg)pg.innerHTML=ph+tutPins();SP.spots=spots}
 function spFit(){const s=Object.values(SP.spots||{});if(s.length===2){const [a,b]=[s[0].xy,s[1].xy],d=Math.hypot(a[0]-b[0],a[1]-b[1]);cmFocus([(a[0]+b[0])/2,(a[1]+b[1])/2],Math.max(1,Math.min(4,500/(d+120))))}else if(s.length)cmFocus(s[0].xy,3);else{CV.s=1;CV.x=0;CV.y=0;cmApply()}}
 
 const avatarHtml=(w,p)=>{const fresh=p&&Date.now()-p.ts<5*60000;return `<div class="av ${w} ${fresh?'fresh':'stale'}"><span class="ring"></span><b>${WHO[w].emoji}</b>${p?.mood?`<i>${esc(p.mood)}</i>`:''}<em>${WHO[w].name}</em></div>`};
@@ -973,6 +1002,48 @@ const tttWin=b=>{for(const [a,c,d] of T3)if(b[a]!=='.'&&b[a]===b[c]&&b[a]===b[d]
 const c4Win=b=>{const g=(r,c)=>r>=0&&r<6&&c>=0&&c<7?b[r*7+c]:'';for(let r=0;r<6;r++)for(let c=0;c<7;c++){const v=g(r,c);if(v==='.')continue;for(const [dr,dc] of [[0,1],[1,0],[1,1],[1,-1]])if([1,2,3].every(k=>g(r+dr*k,c+dc*k)===v))return v}return b.includes('.')?'':'draw'};
 const sym=w=>w==='karim'?'k':'l';const whoOf=s=>s==='k'?'karim':'looli';
 /* ---------- view ---------- */
+
+/* ---------- next tutorial pins ---------- */
+function nextTut(){const now=new Date(),di=dayIdx(now),mins=now.getHours()*60+now.getMinutes();
+  const tuts=(S.classes||[]).filter(k=>/tut/i.test(k.kind||''));if(!tuts.length)return null;
+  for(let o=0;o<=7;o++){const d=(di+o)%7,l=tuts.filter(k=>k.day===d&&(o>0||toMin(PER[k.period][0])>mins-10)).sort((a,b)=>a.period-b.period);
+    if(l.length){const k=l[0],c=C(k.course),t=PER[k.period]?.[0]||'';const when=new Date(now);when.setDate(now.getDate()+o);const [h,m]=t.split(':').map(Number);when.setHours(h||0,m||0,0,0);
+      return {c:CN(c)||k.course,room:k.room||'',t,day:o===0?'today':o===1?'tomorrow':DAYS[d],at:+when}}}return null}
+function tutPins(){if(!spLocal().tuts)return '';let h='';
+  for(const w of ['karim','looli']){const p=w===ME?myPres():SP.pres[w],nt=p?.nt;if(!nt)continue;const s=roomSpot(nt.room);if(!s)continue;
+    const off=w==='karim'?-7:7;h+=`<g transform="translate(${(s.xy[0]+off).toFixed(1)},${(s.xy[1]-4).toFixed(1)})"><g class="ctut ${w}"><g class="cavk"><path class="flag" d="M0 0V-26"/><path class="fl" d="M0-26h18l-5 6 5 6H0z"/><text class="ico" x="9" y="-18">📌</text>
+      <g class="tag" transform="translate(0,${w==='karim'?-44:10})"><rect x="-46" y="-7" width="92" height="14" rx="7"/><text y="3">${esc(WHO[w].name)}: ${esc(nt.c)} · ${esc(nt.room)}</text></g>
+      <text class="when" y="${w==='karim'?-55:26}">${esc(nt.day)} ${esc(nt.t)}</text></g></g></g>`}
+  return h}
+/* ---------- homes & the route between them ---------- */
+function homeCard(){const s=SP.shared||{},hm=s.homes||{},both=hm.karim&&hm.looli;
+  return `<section class="card homecard"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Home ↔ home</h3>
+    <div class="row" style="gap:6px"><button class="chip" data-act="spHome">${hm[ME]?'🏠 Update my home':'🏠 I\'m home: save this spot'}</button>${hm[ME]?'<button class="chip" data-act="spHomeDel">Remove mine</button>':''}</div></div>
+    ${both?`<div id="homemap" class="homemap" data-k="${[hm.karim.lat,hm.karim.lng,hm.looli.lat,hm.looli.lng].join(',')}"><p class="muted" style="padding:20px">Finding the best way between your homes…</p></div><p id="routeinfo" class="small muted" style="margin:8px 0 0">${SP.routeTxt||''}</p>`
+      :`<p class="small muted">${hm[ME]?`Waiting for ${WHO[YOU].name} to save ${WHO[YOU].name==='Looli'?'her':'his'} home.`:`When you're at home, tap the button. ${hm[YOU]?WHO[YOU].name+' already saved theirs.':''}`} Once you've both saved, the fastest way from ${ME==='karim'?'your home to hers':'his home to yours'} shows up here. Homes are only stored in your private data.</p>`}</section>`}
+async function spRoute(){const el=$('#homemap');if(!el)return;const hm=(SP.shared||{}).homes||{};const a=hm.karim,b=hm.looli;if(!a||!b)return;
+  const key='route:'+[a.lat,a.lng,b.lat,b.lng].map(v=>(+v).toFixed(4)).join(',');let R=null;try{R=JSON.parse(localStorage.getItem(key)||'null')}catch(e){}
+  if(!R){try{const r=await fetch(`https://router.project-osrm.org/route/v1/driving/${a.lng},${a.lat};${b.lng},${b.lat}?overview=full&geometries=geojson`);const j=await r.json();const rt=j.routes&&j.routes[0];if(!rt)throw 0;
+      R={line:rt.geometry.coordinates.map(([x,y])=>[+y.toFixed(5),+x.toFixed(5)]),km:rt.distance/1000,min:rt.duration/60};
+      try{const pad=.004,la=R.line.map(p=>p[0]),lo=R.line.map(p=>p[1]),bb=[Math.min(...la)-pad,Math.min(...lo)-pad,Math.max(...la)+pad,Math.max(...lo)+pad].map(v=>v.toFixed(4)).join(',');
+        const q=`[out:json][timeout:25];way["highway"~"^(motorway|trunk|primary|secondary|tertiary|motorway_link|trunk_link|primary_link)$"](${bb});out geom;`;
+        const o=await (await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q)})).json();
+        R.roads=o.elements.filter(e=>e.geometry).map(e=>[/motorway|trunk/.test(e.tags.highway)?2:/primary/.test(e.tags.highway)?1:0,e.geometry.map(g=>[+g.lat.toFixed(5),+g.lon.toFixed(5)])])}catch(e){R.roads=[]}
+      try{localStorage.setItem(key,JSON.stringify(R))}catch(e){}}catch(e){el.innerHTML='<p class="muted" style="padding:20px">Couldn\'t get directions right now. Check the connection and open this tab again.</p>';return}}
+  const all=[...R.line,[a.lat,a.lng],[b.lat,b.lng]],la0=all.reduce((s,p)=>s+p[0],0)/all.length,lo0=all.reduce((s,p)=>s+p[1],0)/all.length,kx=111320*Math.cos(la0*Math.PI/180),ky=110540;
+  const pr=([la,lo])=>[(lo-lo0)*kx,-(la-la0)*ky],L=R.line.map(pr),xs=L.map(p=>p[0]).concat(pr([a.lat,a.lng])[0],pr([b.lat,b.lng])[0]),ys=L.map(p=>p[1]).concat(pr([a.lat,a.lng])[1],pr([b.lat,b.lng])[1]);
+  const mx=Math.max(...xs)-Math.min(...xs),my=Math.max(...ys)-Math.min(...ys),pad=Math.max(mx,my)*.12+150,vb=[Math.min(...xs)-pad,Math.min(...ys)-pad,mx+pad*2,my+pad*2],u=Math.max(vb[2],vb[3])/600;
+  const pl=arr=>arr.map(p=>pr(p).map(v=>v.toFixed(0)).join(',')).join(' ');
+  const g=pr([CAMPUS.lat,CAMPUS.lng]),gIn=g[0]>vb[0]&&g[0]<vb[0]+vb[2]&&g[1]>vb[1]&&g[1]<vb[1]+vb[3];
+  const pin=(w,p)=>{const [x,y]=pr([p.lat,p.lng]);return `<g transform="translate(${x.toFixed(0)},${y.toFixed(0)}) scale(${u.toFixed(2)})"><g class="hpin ${w}"><circle class="halo" r="26"/><path class="house" d="M-15 2L0-12 15 2V16H-15Z"/><text class="em" y="11">${WHO[w].emoji}</text><g class="tag" transform="translate(0,32)"><rect x="-38" y="-9" width="76" height="18" rx="9"/><text y="4">${w===ME?'Your home':WHO[w].name+"'s home"}</text></g></g></g>`};
+  el.innerHTML=`<svg class="hmap" viewBox="${vb.map(v=>v.toFixed(0)).join(' ')}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Route between your homes">
+    <rect x="${vb[0]}" y="${vb[1]}" width="${vb[2]}" height="${vb[3]}" class="hbg"/>
+    <g class="hroads">${(R.roads||[]).map(([k,pts])=>`<polyline class="r${k}" style="stroke-width:${((k+1)*2.2*u).toFixed(1)}" points="${pl(pts)}"/>`).join('')}</g>
+    ${gIn?`<g transform="translate(${g[0].toFixed(0)},${g[1].toFixed(0)}) scale(${u.toFixed(2)})"><circle class="guc" r="16"/><text class="em" y="6">🏫</text><text class="gl" y="30">GUC</text></g>`:''}
+    <polyline class="rglow" style="stroke-width:${(14*u).toFixed(1)}" points="${pl(R.line)}"/><polyline class="rline" style="stroke-width:${(5*u).toFixed(1)};stroke-dasharray:${(10*u).toFixed(1)} ${(9*u).toFixed(1)}" points="${pl(R.line)}"/>
+    ${pin('karim',a)}${pin('looli',b)}</svg>`;
+  SP.routeTxt=`🚗 Fastest drive: <b>${R.km.toFixed(1)} km</b>, about <b>${Math.round(R.min)} min</b> without traffic · straight line ${fmtD(distM(a,b))}. Directions © OSRM, roads © OpenStreetMap.`;const ri=$('#routeinfo');if(ri)ri.innerHTML=SP.routeTxt}
+
 function spSetupCard(){const k=SP.err==='nokey';return `<div class="card spsetup"><h2>Our space needs one more key</h2>
   <p>${k?'Connect your data first (Settings → GUC data sync), then come back here.':'Your current key can read the planner data but can\'t write to our shared space yet.'}</p>
   ${k?'':`<ol class="small"><li>On GitHub: Settings → Developer settings → Fine-grained tokens → <b>Generate new token</b>.</li><li>Repository access: only <b>looli-data</b>.</li><li>Permissions: <b>Contents: Read</b> and <b>Issues: Read and write</b>.</li><li>Paste it below on both phones (it replaces the old key and does both jobs).</li></ol>
@@ -995,9 +1066,10 @@ function spView(){if(!SP.last&&!SP.err){spPull()}
     <div class="row spstats"><span>💞 Together streak <b>${tg}</b> day${tg===1?'':'s'}</span><span>📚 Studied together <b>${Math.round(s.stats?.studyMins||0)}</b> min</span><span>🏆 Games ${(ttt.score[ME]||0)+(c4.score[ME]||0)+(rps.score[ME]||0)}–${(ttt.score[YOU]||0)+(c4.score[YOU]||0)+(rps.score[YOU]||0)}</span></div>
   </section>
   <section class="card spmapcard"><div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><h3 style="margin:0">Our campus</h3>
-    <div class="row" style="gap:6px"><button class="chip" aria-pressed="${!!l.share&&!l.ghost}" data-act="spShare">${l.share&&!l.ghost?'📡 Sharing live':'📡 Share my location'}</button><button class="chip" aria-pressed="${!!l.ghost}" data-act="spGhost">👻 Ghost</button><button class="chip" data-act="spFit">🎯 Find us</button></div></div>
+    <div class="row" style="gap:6px"><button class="chip" aria-pressed="${!!l.share&&!l.ghost}" data-act="spShare">${l.share&&!l.ghost?'📡 Sharing live':'📡 Share my location'}</button><button class="chip" aria-pressed="${!!l.ghost}" data-act="spGhost">👻 Ghost</button><button class="chip" data-act="spFit">🎯 Find us</button><button class="chip" aria-pressed="${!!l.tuts}" data-act="spTuts">📌 Next tutorials</button></div></div>
     <div id="spmap" class="spmap" role="application" aria-label="Map of the GUC campus with both of you on it"></div>
-    <p class="small muted" style="margin:8px 0 0">Drag to move, pinch or scroll to zoom, tap a building to see who's there. Press and hold to save one of <b>our places</b> or drop a <b>meet-me pin</b>. Location is only shared while the app is open, and only with ${WHO[YOU].name}.</p></section>
+    <p class="small muted" style="margin:8px 0 0">${l.tuts?'📌 Pins show each of your next tutorials (tutorials only). ':''}Drag to move, pinch or scroll to zoom, tap a building to see who's there. Press and hold to save one of <b>our places</b> or drop a <b>meet-me pin</b>. Location is only shared while the app is open, and only with ${WHO[YOU].name}.</p></section>
+  ${homeCard()}
   <div class="grid spgrid">
     <section class="card"><h3>How I feel</h3><div class="moods">${['😊','🥰','😴','😵‍💫','🤓','😤','🥲','🔥','🍕','🎧'].map(m=>`<button class="mood" aria-pressed="${me.mood===m}" data-act="spMood" data-id="${m}">${m}</button>`).join('')}</div>
       <form id="spst" class="row" style="margin-top:8px"><input name="s" maxlength="60" placeholder="Status, e.g. stuck in HVAC 😩" value="${esc(l.status||'')}" style="flex:1"><button class="ghost">Set</button></form></section>
@@ -1022,19 +1094,27 @@ function spView(){if(!SP.last&&!SP.err){spPull()}
     <section class="card game"><h3>Rock, paper, scissors</h3><p class="small muted">Round ${rps.round} · ${rps.score[ME]||0}–${rps.score[YOU]||0}${rps.last?' · last: '+esc(rps.last):''}</p>
       ${rps[ME]?`<p>You picked ${rps[ME]}. ${rps[YOU]?'':'Waiting for '+WHO[YOU].name+'…'}</p>`:`<div class="row">${['✊','✋','✌️'].map(x=>`<button class="mood big" data-act="spRPS" data-id="${x}">${x}</button>`).join('')}</div>${rps[YOU]?`<p class="small muted">${WHO[YOU].name} has picked. Your turn!</p>`:''}`}</section>
   </div>`}
-function spPaint(){if(cur!=='space')return;const keep=$('#spmap');const y=scrollY;
-  if(keep&&keep.querySelector('#cmap')){const v=document.createElement('div');v.innerHTML=spView();const m=v.querySelector('#spmap');if(m)m.replaceWith(keep);$('#view').replaceChildren(...v.childNodes);scrollTo(0,y);spMarkers()}
-  else{$('#view').innerHTML=spView();spMap()}spBind()}
+function spPaint(){if(cur!=='space')return;const html=spView(),ae=document.activeElement;
+  if(html===SP.lastHtml&&$('#spmap')){spMarkers();return}
+  if(ae&&$('#view').contains(ae)&&/INPUT|TEXTAREA|SELECT/.test(ae.tagName)){spMarkers();return}
+  SP.lastHtml=html;const keep=$('#spmap'),hk=$('#homemap'),y=scrollY;
+  if(keep&&keep.querySelector('#cmap')){const v=document.createElement('div');v.innerHTML=html;const m=v.querySelector('#spmap');if(m)m.replaceWith(keep);const h=v.querySelector('#homemap');if(h&&hk&&hk.querySelector('svg')&&hk.dataset.k===h.dataset.k)h.replaceWith(hk);$('#view').replaceChildren(...v.childNodes);scrollTo(0,y);spMarkers()}
+  else{$('#view').innerHTML=html;spMap()}if($('#homemap')&&!$('#homemap svg'))spRoute();spBind()}
 function spBind(){const f=$('#spst');if(f)f.onsubmit=e=>{e.preventDefault();spSet({status:new FormData(f).get('s').trim()});spSendMe({},true);toast('Status set.')};
   const q=$('#spqa');if(q)q.onsubmit=e=>{e.preventDefault();const a=new FormData(q).get('a').trim();if(a)spPost({t:'answer',day:today(),a}).then(()=>{const t=SP.comments.find(c=>c.t==='answer'&&c.day===today()&&c.from===YOU);if(t)floatHearts('✨')})};
   const k=$('#spkey');if(k)k.onsubmit=e=>{e.preventDefault();const t=new FormData(k).get('k').trim();if(!t)return;setSyncCfg({...syncCfg(),token:t});SP.err='';SP.last=0;spPull();toast('Key saved.')}}
-function spStart(){if(SP.timer)return;SP.timer=setInterval(()=>{if(document.hidden)return;spPull();if(spLocal().share)spSendMe();else spSendMe({},false)},20000);
+function spStart(){if(SP.timer)return;let n=0;SP.timer=setInterval(()=>{if(document.hidden)return;n++;const fast=cur==='space';if(!fast&&n%8)return;spPull();if(n%4===0||!fast)spSendMe()},2500);
   if(spLocal().share&&!spLocal().ghost)spLocate(true);spPull().then(()=>spSendMe({},true))}
 Object.assign(A,{
   spShare(){const on=!(spLocal().share&&!spLocal().ghost);spSet({share:on,ghost:false});spLocate(on);if(!on)spSendMe({},true);else toast('Sharing your location with '+WHO[YOU].name+' while the app is open.');spPaint()},
   spGhost(){const g=!spLocal().ghost;spSet({ghost:g});if(g){spLocate(false);SP.here=null;spSendMe({},true);toast('Ghost mode: you\'re hidden from the map.')}else{if(spLocal().share)spLocate(true);spSendMe({},true)}spPaint()},
   spFit(){spFit()},
   cmZ(d){cmZoom(d==='in'?1.4:1/1.4)},
+  cmHome(){CV.s=1;CV.x=0;CV.y=0;cmApply()},
+  spTuts(){spSet({tuts:!spLocal().tuts});spSendMe({},true);spMarkers();spPaint();if(spLocal().tuts){const n=nextTut();toast(n?`Your next tutorial: ${n.c} in ${n.room}, ${n.day} ${n.t}`:'No tutorials in your timetable.')}},
+  spHome(){if(!navigator.geolocation)return toast('This browser can\'t share location.');toast('Getting your location…');navigator.geolocation.getCurrentPosition(pos=>{const {latitude:lat,longitude:lng,accuracy}=pos.coords;
+    spSaveShared(s=>{s.homes={...(s.homes||{}),[ME]:{lat:+lat.toFixed(5),lng:+lng.toFixed(5)}}}).then(()=>{toast(`Home saved (accurate to about ${Math.round(accuracy)} m).`);floatHearts('🏠')})},()=>toast('Location is blocked. Allow it for this site and try again.'),{enableHighAccuracy:true,timeout:20000})},
+  spHomeDel(){spSaveShared(s=>{const h={...(s.homes||{})};delete h[ME];s.homes=h});toast('Your home was removed.')},
   spPinHere(v){const [x,y]=v.split(',').map(Number);close();setTimeout(()=>spPinMenu(toLL(x,y)),50)},
   spPing(k){spPost({t:'ping',k}).then(()=>{floatHearts(PINGS[k][0]);toast(`Sent ${PINGS[k][0]} to ${WHO[YOU].name}.`)}).catch(()=>toast('Couldn\'t send. Check the connection.'))},
   spMood(m){spSet({mood:spLocal().mood===m?'':m});spSendMe({},true);spPaint()},
@@ -1054,7 +1134,7 @@ Object.assign(A,{
   spRPS(x){spSaveShared(s=>{const g=s.rps;if(g[ME])return;g[ME]=x;if(g[YOU]){const beats={'✊':'✌️','✋':'✊','✌️':'✋'},a=g[ME],b=g[YOU];const win=a===b?'':beats[a]===b?ME:YOU;if(win)g.score[win]=(g.score[win]||0)+1;
       g.last=`${WHO[ME].name} ${a} vs ${b} ${WHO[YOU].name}: ${win?WHO[win].name+' wins':'tie'}`;g.karim='';g.looli='';g.round++}}).then(()=>{const g=SP.shared.rps;if(g.last&&g.last.includes(WHO[ME].name+' wins'))floatHearts('🏆')})}
 });
-V.space=()=>{spStart();setTimeout(()=>{spMap();spBind();document.querySelector('nav [data-id=space]')?.classList.remove('ping')},0);return spView()};
+V.space=()=>{spStart();const h=spView();SP.lastHtml=h;setTimeout(()=>{spMap();spRoute();spBind();document.querySelector('nav [data-id=space]')?.classList.remove('ping')},0);return h};
 VIEWS.push('space');if(location.hash==='#space'){cur='space';render()}
 if(syncCfg().token)setTimeout(spStart,1500);
 
